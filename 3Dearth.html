@@ -1,0 +1,1093 @@
+<!-- TO-DO -->
+<!-- Add search bar for cities w/ drop down list -->
+<!-- Add flags next to city/country innerText -->
+<!-- Rotate satellites and moon around earth -->
+<!-- Add GSAP animations w/ button/scroll-trigger to scroll in/out -->
+<!-- Make a night/dark mode and use the earth nightmapn(yt video on themes) -->
+<!-- Add multiligual toggle to page -->
+<!-- Add comments for clarification(HTML, CSS, & JS) -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="../modules/gio.module.js"></script> -->
+    <!-- <script src="../modules/stats.min.js"></script>  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="3DearthStyle.css"/>
+    <!-- <link rel="stylesheet" href="country-flag.css"> -->
+    <!-- <script src="country-flag.js"></script> -->
+    <title>3D Earth</title>
+</head>
+<body>
+
+  <!-- <div id="stats"></div> -->
+
+    <!--Navigation Menu -->
+    <nav>
+        <input style="display: none;" type="checkbox" id="nav-toggle">
+
+        <div class="logo">
+          <span class="letters">3</span>
+          <span class="letters">D</span>
+          <span class="letters" style="cursor: auto">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="letters">E</span>
+          <span class="letters">A</span>
+          <span class="letters">R</span>
+          <span class="letters">T</span>
+          <span class="letters">H</span>
+        </div>
+
+        <ul class="links">
+          <li class="link"><a href="index.html" class="btn">🏠 Home</a></li>
+          <li class="link"><a href="3Dearth.html" class="btn">🌎 3D Earth</a></li>
+          <li class="link"><a href="3Dcharacter.html" class="btn">🤖 3D Character</a></li>
+          <li class="link"><a href="3DsolarSystem.html" class="btn">🌌 Solar System</a></li>
+        </ul>
+
+        <label for="nav-toggle" class="hamburger-menu">
+          <div class="hamburger hamburger3">
+
+            <div class="linea">
+              <div id="li" class="line"></div>
+            </div>
+
+            <div class="linea">
+              <div id="li" class="line"></div>
+            </div>
+
+            <div class="linea">
+              <div id="li" class="line"></div>
+              </div>
+          </div>
+        </label>
+    </nav>
+
+
+    <!-- FLAGS -->
+    <!-- <div id="my-parent-element"></div>  -->
+
+    <!--  PLACES LIST -->
+    <div id="list"></div>
+    <div id="listR"></div>
+    <button class="buttonS" type="button" style="z-index: 100; color: red; cursor: pointer;" onclick="reloadPage()">Reload page</button>
+      
+
+
+
+
+
+
+      <!--FOOTER-->
+      <footer>
+      <ul class="footer-links">
+        <li class="fl">          
+          <span style="--i:1;"><a href="https://github.com/Marqui-13" target="_blank"><img  src="./glogo.png" width="70" height="70"></a></span>
+        </li>
+        <li class="fl">
+          <span style="--i:2;"><a href="https://codepen.io/marqui-13" target="_blank"><img  src="./codepen1.png" width="70" height="70"></a></span>
+        </li>
+      </ul>
+      </footer>
+
+
+    <!-- JS SECTION STARTS -->
+
+  <!-- TEXT FONT SHADER START -->
+  <script type="x-shader/x-vertex" id="vertexshaderText">
+
+    uniform float amplitude;
+
+    attribute vec3 displacement;
+    attribute vec3 customColor;
+
+    varying vec3 vColor;
+
+    void main() {
+
+      vec3 newPosition = position + amplitude * displacement;
+
+      vColor = customColor;
+
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+
+    }
+
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentshaderText">
+
+    uniform vec3 color;
+    uniform float opacity;
+
+    varying vec3 vColor;
+
+    void main() {
+
+      gl_FragColor = vec4( vColor * color, opacity );
+
+    }
+
+  </script>
+  <!-- TEXT FONT SHADER START -->
+
+  
+
+  <!--  EARTH SAHDER START -->
+  <script type="x-shader/x-vertex" id="earthVertexShader">
+    varying vec2 vertexUV;
+    varying vec3 vertexNormal;
+
+    void main() {
+      vertexUV = uv;
+      vertexNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }
+  </script>
+
+
+
+<script type="x-shader/x-fragment" id="earthFragmentShader">
+    varying vec2 vertexUV;
+    varying vec3 vertexNormal;
+    uniform sampler2D globeTexture;
+
+    
+
+    void main() {
+      float intensity = 0.7 - dot(vertexNormal, vec3(0.0,0.0,1.0));
+      vec3 atmosphere = vec3(0.3, 0.6, 1.0) * pow(intensity, 3.0);
+      gl_FragColor = vec4(texture2D(globeTexture, vertexUV).xyz, 1.0);
+    }
+</script>
+<!-- EARTH SHADER END -->
+
+
+
+
+<!-- CLOUD SHADER START -->
+<script type="x-shader/x-vertex" id="cloudVertexShader">
+  varying vec2 vertexUV;
+
+  void main() {
+    vertexUV = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  }
+</script>
+
+
+
+<script type="x-shader/x-fragment" id="cloudFragmentShader">
+  varying vec2 vertexUV;
+  uniform sampler2D globeTexture;
+
+
+  void main() {
+    gl_FragColor = texture2D(globeTexture, vertexUV);
+  }
+</script>
+<!-- CLOUD SHADER END -->
+
+
+
+
+
+
+<!-- ATMOSPHERE SHADER START -->
+
+<script type="x-shader/x-vertex" id="atmVertexShader">
+  varying vec3 vertexNormal;
+
+  void main() {
+    vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
+  }
+</script>
+
+
+
+<script type="x-shader/x-fragment" id="atmFragmentShader">
+  varying vec3 vertexNormal;
+
+  void main() {
+    float intensity = pow(0.003 - dot(vertexNormal, vec3(0.0,0.0,0.8)),3.1);
+    gl_FragColor = vec4(0.3, 0.6, 1.0, 6.0) * intensity;
+  }
+</script>
+
+<!-- ATMOSPHERE SHADER END -->
+
+
+
+<!-- 360 SHADER START -->
+
+<script type="x-shader/x-vertex" id="360VertexShader">
+  //varying vec3 vertexNormal;
+  varying vec2 vertexUV;
+
+  void main() {
+    vertexUV = uv;
+    //vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
+  }
+</script>
+
+
+
+<script type="x-shader/x-fragment" id="360FragmentShader">
+  //varying vec3 vertexNormal;
+  varying vec2 vertexUV;
+
+  void main() {
+    gl_FragColor = vec4(vertexUV, 0.0, 1.0) ;
+  }
+</script>
+
+<!-- 360 SHADER END -->
+
+
+
+
+
+
+  <script type="module">
+    import * as THREE from "../modules/three.module.js";
+    //import {DragControls} from "../modules/DragControls.js";
+    // import { FirstPersonControls } from "../modules/FirstPersonControls.js";
+    // import {FlyControls} from "../modules/FlyControls.js";
+    import Stats from './Stats.js';
+    //import {StatsManager} from "../modules/stats-manager.js";
+    //import * as GIO from '../modules/gio.modules.js';
+    import {OrbitControls} from "./OrbitControls.js";
+    import {FontLoader} from "./FontLoader.js";
+    import {TextGeometry} from "./TextGeometry.js";
+
+
+
+    //const statsManager = new StatsManager();
+
+    // RENDERER
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.device);
+    document.body.appendChild(renderer.domElement);
+
+    // SCENE
+    const scene360 = new THREE.Scene();
+    const scenePlanet = new THREE.Scene();
+    const sceneFinal = new THREE.Scene();
+
+
+
+    // CAMERA
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      10000
+    );
+
+    camera.position.set(0, 2, 30)
+  
+
+    // LIGHT
+    const ambientLight = new THREE.AmbientLight(0xffffff);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5,3,5);
+    scene360.add(ambientLight, dirLight);
+    scenePlanet.add(ambientLight, dirLight);
+
+
+
+    // SIZES
+    const sizes = {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+
+    window.addEventListener("resize", () => {
+      // Update sizes
+      sizes.width = window.innerWidth;
+      sizes.height = window.innerHeight;
+
+      // Update camera
+      camera.aspect = sizes.width / sizes.height;
+      camera.updateProjectionMatrix();
+
+      // Update renderer
+      renderer.setSize(sizes.width, sizes.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+
+    // STATS
+    // let container = document.getElementById( "globalArea" );
+	  // let controller = new GIO.Controller( container );
+    // controller.enableStats();
+
+    // let stats;
+    // stats.domElement.style.position = 'absolute';
+    // stats.domElement.style.right = '0';
+    // stats.domElement.style.top = '0';
+		// document.body.appendChild( stats.dom );
+
+    // Statistics
+    let stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.bottom = '0px';
+    stats.domElement.style.zIndex = 100;
+    document.body.appendChild(stats.domElement);
+
+
+
+
+
+
+    // var rightmousemove;
+    // document.addEventListener("mousedown", function(event){
+    //   rightmousemove = false;
+    //   if(event.button == 2){
+    //     rightmousemove = true;
+    //     return false;
+    //   //   // Right click
+    //   }
+    // });
+    // document.addEventListener("mousemove", function(event){
+    //   if(rightmousemove === true){
+    //      // Use stopImmediatePropagation to stop the other handeller from trigerring
+    //     event.stopImmediatePropagation();
+    //   }
+    // });
+
+
+    function create360(){
+        // EARTH
+        const texture360 = new THREE.TextureLoader().load('./spi5.jpg');
+        // const sphereShaderMaterial = new THREE.ShaderMaterial({
+        // side: THREE.DoubleSide,
+        // vertexShader: document.getElementById("360VertexShader").textContent,
+        // fragmentShader: document.getElementById("360FragmentShader").textContent,
+
+        // blending: THREE.AdditiveBlending,
+        // depthTest: false,
+        // transparent: false,
+        // vertexColors: true,
+        // });
+        const sbg = new THREE.SphereBufferGeometry(10, 32, 32)
+        const sphere = new THREE.Mesh(sbg, new THREE.MeshBasicMaterial({
+          map: texture360,
+          side: THREE.BackSide
+          })
+        );
+        scene360.add(sphere);
+    }
+
+    create360();
+
+
+
+    const group = new THREE.Group();
+
+    //function createPlanet(){
+        const earthShaderMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          globeTexture: {
+            value: new THREE.TextureLoader().load("./2_no_clouds_4k.jpg")
+          },
+        },
+        vertexShader: document.getElementById("earthVertexShader").textContent,
+        fragmentShader: document.getElementById("earthFragmentShader").textContent,
+
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: false,
+        vertexColors: true,
+        });
+        const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
+        const earth = new THREE.Mesh(ebg, earthShaderMaterial);
+        group.add(earth);
+        //camera.lookAt(earth.position);
+
+
+
+
+        // COORDINATES SECTION STARTS
+      function calcPosFromLatLonRad(lat,lon){
+        var phi = (lat) * Math.PI/180;
+        var theta = (lon+180) * Math.PI/180;
+        var theta1 = (270-lon) * Math.PI/180;
+
+
+        let x = -(Math.cos(phi) * Math.cos(theta));
+        let z = (Math.cos(phi) * Math.sin(theta));
+        let y = (Math.sin(phi));
+        let vector = {x,y,z};
+        let euler = new THREE.Euler(phi, theta1, 0, 'XYZ')
+        let quaternion = new THREE.Quaternion().setFromEuler(euler)
+        return {vector, quaternion};
+      }
+
+      //let parentElement = document.getElementById("my-parent-element");
+      //let flag = new CountryFlag(parentElement);
+        // <style>
+        //   i.flag:not(.icon):before {
+        //     content: "";
+        //     background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
+        //   }
+        //   i.flag:not(.icon), i.flag:not(.icon):before {
+        //   display: inline-block;
+        //   width: 16px;
+        //   height: 11px;
+        //   }
+        //   i.flag-america:before, i.flag-united-states:before, i.flag-us:before {
+        //   background-position: -72px -1950px!important;
+        //   }
+        //   i.flag:before {
+        //   display: inline-block;
+        //   width: 16px;
+        //   height: 11px;
+        //   content: "";
+        //   background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
+        //   }
+        //   *, :after, :before {
+        //   box-sizing: border-box;
+        //   }
+        // </style>
+
+
+
+        let points = [
+        {
+          title: 'Chicago, US',
+          //flag: <i class="flag flag-united-states"></i>,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 41.8781,
+            lng: -87.6298
+          }
+        },
+        {
+          title: 'New Delhi, IN',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 28.6139,
+            lng: 77.2090
+          }
+        },
+        {
+          title: 'Kyiv, UA',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 50.4501,
+            lng: 30.5234
+          }
+        },
+        {
+          title: 'Paris, EU',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 48.8566,
+            lng: 2.3522
+          }
+        },
+        {
+          title: 'Seoul, KR',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 37.5665,
+            lng: 126.9780 
+          }
+        },
+        {
+          title: 'Egypt, AF',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 26.8206, 
+            lng: 30.8025
+          }
+        },
+        {
+          title: 'Brazil, SA',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: -14.2350,
+            lng: -51.9253
+          }
+        },
+        {
+          title: 'Mexico City, MX',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 19.4326,
+            lng: -99.1332
+          }
+        }
+      ]
+
+      let list = document.getElementById('list');
+      points.forEach(p=>{
+        let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
+        let placesL = document.createElement('div');
+        placesL.innerText = p.title;
+        list.appendChild(placesL);
+
+        
+        let mesh = new THREE.Mesh(
+          new THREE.SphereBufferGeometry(0.01, 32, 32),
+          new THREE.MeshBasicMaterial({color: 0xffd700})
+        );
+        group.add(mesh);
+        mesh.position.copy(coords.vector);
+
+        let animatedQuaternion = new THREE.Quaternion();
+
+        let currentQuaternion = new THREE.Quaternion();
+        
+        placesL.addEventListener("click",()=>{
+          let o = {p:0};
+          currentQuaternion.copy(group.quaternion);
+          gsap.to(o,{
+            p:1,
+            duration:1,
+            onUpdate:()=>{
+
+              animatedQuaternion.slerpQuaternions(currentQuaternion, coords.quaternion, o.p);
+              group.quaternion.copy(animatedQuaternion);
+
+            }
+          })
+        })
+      })
+
+
+
+
+      let pointsR = [
+        {
+          titleR: 'Alice Springs, AU',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: -23.6980,
+            lng: 133.8807
+          }
+        },
+        {
+          titleR: 'Gansu, CN',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 36.0594,
+            lng: 103.8263
+          }
+        },
+        {
+          titleR: 'South Pole, AQ',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 90.0000,
+            lng: 45.0000
+          }
+        },
+        {
+          titleR: 'Chile, SA',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: -35.6751,
+            lng: -71.5430
+          }
+        },
+        {
+          titleR: 'Sabah, MA',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 5.9788,
+            lng: 116.0753
+          }
+        },
+        {
+          titleR: 'Cancun, MX',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 21.1619,
+            lng: -86.8515
+          }
+        },
+        {
+          titleR: 'Zambia, AF',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: -13.1339,
+            lng: 27.8493
+          }
+        },
+        {
+          titleR: 'Ash-Shahaniyah, QA',
+          //flag: ,
+          //country: flag.selectByAlpha3("cub"),
+          coords: {
+            lat: 25.4106,
+            lng: 51.1846
+          }
+        }
+      ]
+
+      let listR = document.getElementById('listR');
+      pointsR.forEach(p=>{
+        let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
+        
+        let placesR = document.createElement('div');
+        placesR.innerText = p.titleR;
+        listR.appendChild(placesR);
+        
+        let mesh = new THREE.Mesh(
+          new THREE.SphereBufferGeometry(0.01, 32, 32),
+          new THREE.MeshBasicMaterial({color: 0xffd700})
+        );
+        group.add(mesh);
+        mesh.position.copy(coords.vector);
+
+        let animatedQuaternion = new THREE.Quaternion();
+
+        let currentQuaternion = new THREE.Quaternion();
+        
+        placesR.addEventListener("click",()=>{
+          let o = {p:0};
+          currentQuaternion.copy(group.quaternion);
+          gsap.to(o,{
+            p:1,
+            duration:1,
+            onUpdate:()=>{
+
+              animatedQuaternion.slerpQuaternions(currentQuaternion, coords.quaternion, o.p);
+              group.quaternion.copy(animatedQuaternion);
+
+            }
+          })
+
+
+          // let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng);
+          // group.quaternion.copy(coords.quaternion);
+        })
+      })
+
+      let line, uniforms;
+      //let textR2 = new THREE.Mesh();
+      let fontLoader = new FontLoader();
+      fontLoader.load( './helvetiker_bold.typeface.json', function ( font ) {
+        init(font);
+        animate();
+      
+        // textGeo.computeBoundingBox();
+        // const centerOffsetX = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+        // const centerOffsetY = -0.5 * ( textGeo.boundingBox.max.y - textGeo.boundingBox.min.y );
+        // const centerOffsetZ = 0.5 * ( textGeo.boundingBox.max.z - textGeo.boundingBox.min.z );
+
+
+
+
+
+
+        // let mat1 = [
+        // new THREE.MeshLambertMaterial({ color: 0xffd700}),
+        // new THREE.MeshLambertMaterial({color: 0x00befc })
+        // ]
+
+        // let mat2 = [
+        // new THREE.MeshLambertMaterial({ color: 0xffd700}),
+        // new THREE.MeshLambertMaterial({color: 0x00ff00 })
+        // ]
+        
+
+
+
+        // const text1 = new THREE.Mesh(textGeo, mat1);
+        // const text2 = new THREE.Mesh(textGeo, mat2);
+        // textR1 = text1;
+        // textR2 = text2;
+
+        // text1.castShadow = true;
+        // text1.position.x = -2.3;
+        // text1.position.y = 2.5;
+        // text1.position.z = 0;
+        // textR1.rotation.y = 0;
+
+        // text2.castShadow = true;
+        // text2.position.x = 2.5;
+        // text2.position.y = 2.5;
+        // text2.position.z = 0;
+        // //controls.enabled = false;
+        // //textMesh.rotation.x = 0;
+        // textR2.rotation.y = Math.PI;
+
+        //scenePlanet.add(text1);
+        // scenePlanet.add(text2);
+      });
+
+
+      function init(font) {
+
+        uniforms = {
+          amplitude: { value: 6.0 },
+          opacity: { value: 0.2 },
+          color: { value: new THREE.Color( 0xffffff ) }
+        };
+
+        let geometrySetting = {
+		    font: font,
+		    size: 10,
+		    height: 5,
+		    curveSegments: 10,
+		    bevelEnabled: true,
+		    bevelThickness: 5,
+		    bevelSize: 1.5,
+		    bevelSegments: 10
+	      };
+
+        const shaderMaterial = new THREE.ShaderMaterial({
+          uniforms: uniforms,
+          vertexShader: document.getElementById( 'vertexshaderText' ).textContent,
+          fragmentShader: document.getElementById( 'fragmentshaderText' ).textContent,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true
+        });
+
+        const textGeo = new TextGeometry('EXPLORE', geometrySetting);
+        textGeo.center();
+
+        const count = textGeo.attributes.position.count;
+
+				const displacement = new THREE.Float32BufferAttribute( count * 7, 3 );
+				textGeo.setAttribute( 'displacement', displacement );
+
+				const customColor = new THREE.Float32BufferAttribute( count * 7, 3 );
+				textGeo.setAttribute( 'customColor', customColor );
+
+				const color = new THREE.Color( 0xffffff );
+
+				for ( let i = 0, l = customColor.count; i < l; i ++ ) {
+
+					color.setHSL( i / l, 0.5, 0.5 );
+					color.toArray( customColor.array, i * customColor.itemSize );
+
+				}
+
+				line = new THREE.Line( textGeo, shaderMaterial );
+        line.position.y = 15;
+				line.rotation.x = 0.2;
+				scenePlanet.add( line );
+
+      }
+
+      scenePlanet.add(group);
+
+      // let button = document.createElement('Button');
+      // button.innerHTML = "Title";
+      // button.style = "color: white; z-index: 100;";
+      // document.body.appendChild(button);
+
+
+
+
+    //}
+
+    //createPlanet();
+
+
+
+
+
+
+    //SPACE BACKGROUND
+    const spaceTexture = new THREE.TextureLoader().load('./earthbg.png');
+    //scenePlanet.background = spaceTexture;
+
+    const hiddenGeometry = new THREE.SphereBufferGeometry(0.98, 32, 32);
+    const hiddenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const hiddenSphere = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
+    // plane.position.set(0, -1, 0);
+    // plane.rotateX(-Math.PI / 2);
+    //scenePlanet.add(hiddenSphere);
+
+
+
+    
+
+
+    // ATMOSPHERE
+    const atmosphereShaderMaterial = new THREE.ShaderMaterial({
+        vertexShader: document.getElementById("atmVertexShader").textContent,
+        fragmentShader: document.getElementById("atmFragmentShader").textContent,
+
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide
+      });
+    const abg = new THREE.SphereBufferGeometry(1.85, 32, 32)
+    const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
+    //atmosphere.scale.set(1.1,1.1,1.1);
+    scenePlanet.add(atmosphere);
+
+
+
+    // Clouds
+    const cloudShaderMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          globeTexture: {
+            value: new THREE.TextureLoader().load('./fair_clouds_4k.png'),
+          }
+        },
+        vertexShader: document.getElementById("cloudVertexShader").textContent,
+        fragmentShader: document.getElementById("cloudFragmentShader").textContent,
+
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+        vertexColors: true,
+      });
+      const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32)
+      const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
+      //const group = new THREE.Group()
+      //group.add(clouds)
+      scenePlanet.add(clouds)
+
+
+
+  
+    
+    // function getCurve(p1,p2) {
+    //   let v1 = new THREE.Vector3(p1.x, p1.y, p1.z);
+    //   let v2 = new THREE.Vector3(p2.x, p2.y, p2.z);
+    //   let points = [];
+    //   for (let i = 0; i <= 20; i++){
+        
+    //     let p = new THREE.Vector3().lerpVectors(v1, v2, i/20);
+    //     p.normalize();
+    //     p.multiplyScalar(1 + 0.1*Math.sin(Math.PI*i/20));
+    //     points.push(p);
+    //   };
+
+    //   let path = new THREE.CatmullRomCurve3(points);
+
+    //   const geometry = new THREE.TubeGeometry( path, 20, 0.01, 8, false );
+    //   const material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+    //   const mesh = new THREE.Mesh( geometry, material );
+    //   scenePlanet.add( mesh );
+    // }
+
+    //getCurve(pos,pos1); 
+
+
+
+
+
+
+    // CONTROLS  SECTION STARTS
+
+    // Drag Controls
+    //let objects = [box];
+
+    //const dControls = new DragControls(box, camera, renderer.domElement);
+
+    //dControls.enabled = true;
+
+    // dControls.deactivate();
+    // dControls.activate();
+
+    // // Drag Controls Event Listeners
+    // dControls.addEventListener("hoveron", function(event){
+    //     event.object.material.wireframe = true;
+    // });
+
+    // // Drag Controls Event Listeners
+    // dControls.addEventListener("hoveroff", function(event){
+    //     event.object.material.wireframe = false;
+
+    // });
+
+    // dControls.addEventListener("dragstart", function(event){
+    //     event.object.material.transparent = true;
+    //     event.object.material.opacity = 0.5;
+    // });
+
+    // dControls.addEventListener("dragend", function(event){
+    //     event.object.material.opacity = 1.0;
+
+    // });
+
+
+
+
+
+    // // First Person Controls
+    // const fpControls = new FirstPersonControls(camera, renderer.domElement);
+
+    // fpControls.enabled = true;
+
+    // fpControls.activeLook = false;
+
+    // fpControls.lookVertical = true;
+
+    // fpControls.constrainVertical = true;
+    // fpControls.verticalMin = Math.PI / 1.7;
+    // fpControls.verticalMax = Math.PI / 2.3;
+
+
+
+
+
+
+    // // Fly Controls
+    // const flyControls = new FlyControls(camera, renderer.domElement);
+
+    // flyControls.movementSpeed = 10;
+
+    // flyControls.rollSpeed = 0.05;
+
+    // flyControls.autoFoward = false;
+
+    // flyControls.dragToLook = true;
+
+
+    
+
+
+
+
+
+
+    // Orbit Controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enabled = true;
+
+    //controls.target = scenePlanet.position;
+
+    controls.minDistance = 0;
+    controls.maxDistance = 1000;
+
+    controls.enableDamping = false;
+    controls.dampingFactor = 0.01;
+
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 1.0;
+
+    controls.enableZoom = true;
+    controls.zoomSpeed = 1.0;
+
+    controls.enableRotate = false;
+    controls.rotateSpeed = 1.0;
+
+
+
+    // scenePlanet.addEventListener('click', function () {
+    //   controls.enabled = false;
+    // });
+    // controls.addEventListener('mouseUp', function () {
+    //   controls.enabled = false;
+    // });
+
+    // // Keyboard Controls
+    // document.onkeydown = function (e) {
+    //   //console.log(e);
+    //   // left arrow key
+    //   if (e.keyCode === 37) {
+    //     earth.position.x -= 1;
+    //   // right arrow key
+    //   } else if (e.keyCode === 39) {
+    //     earth.position.x += 1;
+    //   // up arrow key
+    //   } else if (e.keyCode === 38) {
+    //     earth.position.z -= 1;
+    //   // down arrow key
+    //   } else if (e.keyCode === 40) {
+    //     earth.position.z += 1;
+    //   }
+    //};
+
+    // CONTROLS SECTION ENDS
+
+
+    // const mouse = {
+    //   x: undefined,
+    //   y: undefined
+    // }
+
+    // addEventListener('mousemove', () => {
+    //   mouse.x = (event.clientX / innerWidth) * 2 - 1
+    //   mouse.y = -(event.clientY / innerHeight) * 2 - 1
+    // });
+
+    // Animate
+    function animate() {
+      // dControls.update();
+      // fpControls.update(1.0);
+      // flyControls.update(0.01);
+      //earth.rotation.y += 0.005;
+      clouds.rotation.y += 0.0005;
+      atmosphere.rotation.x += 0.005;
+      atmosphere.rotation.y += 0.005;
+      atmosphere.rotation.z += 0.005;
+      //textR1.rotateY(0.007);
+      //textR2.rotateY(-0.007);
+
+      const time = Date.now() * 0.001;
+
+			line.rotation.y = 0.7 * time;
+      //line.rotation.x = time;
+
+
+			uniforms.amplitude.value = 0.3 * Math.sin( 0.2 * time );
+			uniforms.color.value.offsetHSL( 0.05, 2, 0 );
+
+			const attributes = line.geometry.attributes;
+			const array = attributes.displacement.array;
+
+			for ( let i = 0, l = array.length; i < l; i += 3 ) {
+
+				array[ i ] += 0.3 * ( 0.5 - Math.random() );
+				array[ i + 1 ] += 0.3 * ( 0.5 - Math.random() );
+				array[ i + 2 ] += 0.3 * ( 0.5 - Math.random() );
+
+			}
+
+			attributes.displacement.needsUpdate = true;
+
+      //group.rotation.y = mouse.x * 0.5;
+      // mesh.rotation.y += 0.005;
+      // mesh1.rotation.y += 0.005;
+      // mesh2.rotation.y += 0.005;
+      // mesh3.rotation.y += 0.005;
+      // mesh4.rotation.y += 0.005;
+      controls.update();
+      requestAnimationFrame(animate);
+      renderer.render(scenePlanet, camera);
+      stats.update();
+    }
+
+    //animate();
+  </script>
+  <!-- JS SECTION ENDS -->
+
+
+
+  <!-- GLTF LOADER LINK FOR SATELITES/MOON? FLOATING IN ORBIT 
+  <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script type="module" src="./3DearthLogic.js"></script>
+</body>
+</html>
