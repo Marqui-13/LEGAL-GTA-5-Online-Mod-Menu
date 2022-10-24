@@ -256,11 +256,11 @@
 
   <script type="module">
     import * as THREE from "./modules/three.module.js";
-    //import {DragControls} from "../modules/DragControls.js";
-    // import { FirstPersonControls } from "../modules/FirstPersonControls.js";
-    // import {FlyControls} from "../modules/FlyControls.js";
+    //import {DragControls} from "./modules/DragControls.js";
+    // import { FirstPersonControls } from "./modules/FirstPersonControls.js";
+    // import {FlyControls} from "./modules/FlyControls.js";
     import Stats from './Stats.js';
-    //import * as GIO from '../modules/gio.modules.js';
+    //import * as GIO from './modules/gio.modules.js';
     import {OrbitControls} from "./OrbitControls.js";
     import {FontLoader} from "./FontLoader.js";
     import {TextGeometry} from "./TextGeometry.js";
@@ -364,7 +364,7 @@
 
     function create360(){
         // EARTH
-        const texture360 = new THREE.TextureLoader().load('./spi5.jpg');
+        const texture360 = new THREE.TextureLoader().load('./images/spi5.jpg');
         // const sphereShaderMaterial = new THREE.ShaderMaterial({
         // side: THREE.DoubleSide,
         // vertexShader: document.getElementById("360VertexShader").textContent,
@@ -394,7 +394,7 @@
         const earthShaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
           globeTexture: {
-            value: new THREE.TextureLoader().load("./2_no_clouds_4k.jpg")
+            value: new THREE.TextureLoader().load("./images/2_no_clouds_4k.jpg")
           },
         },
         vertexShader: document.getElementById("earthVertexShader").textContent,
@@ -688,7 +688,7 @@
       let line, uniforms;
       //let textR2 = new THREE.Mesh();
       let fontLoader = new FontLoader();
-      fontLoader.load( './helvetiker_bold.typeface.json', function ( font ) {
+      fontLoader.load( './fonts/helvetiker_bold.typeface.json', function ( font ) {
         init(font);
         animate();
       
@@ -848,7 +848,7 @@
     const cloudShaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
           globeTexture: {
-            value: new THREE.TextureLoader().load('./fair_clouds_4k.png'),
+            value: new THREE.TextureLoader().load('./images/fair_clouds_4k.png'),
           }
         },
         vertexShader: document.getElementById("cloudVertexShader").textContent,
