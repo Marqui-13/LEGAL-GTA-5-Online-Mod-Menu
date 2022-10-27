@@ -525,50 +525,9 @@
             lat: 19.4326,
             lng: -99.1332
           }
-        }
-      ]
-
-      let list = document.getElementById('list');
-      points.forEach(p=>{
-        let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
-        let placesL = document.createElement('option');
-        placesL.innerText = p.title;
-        list.appendChild(placesL);
-
-        
-        let mesh = new THREE.Mesh(
-          new THREE.SphereBufferGeometry(0.01, 32, 32),
-          new THREE.MeshBasicMaterial({color: 0xffd700})
-        );
-        group.add(mesh);
-        mesh.position.copy(coords.vector);
-
-        let animatedQuaternion = new THREE.Quaternion();
-
-        let currentQuaternion = new THREE.Quaternion();
-        
-        placesL.addEventListener("click",()=>{
-          let o = {p:0};
-          currentQuaternion.copy(group.quaternion);
-          gsap.to(o,{
-            p:1,
-            duration:1,
-            onUpdate:()=>{
-
-              animatedQuaternion.slerpQuaternions(currentQuaternion, coords.quaternion, o.p);
-              group.quaternion.copy(animatedQuaternion);
-
-            }
-          })
-        })
-      })
-
-
-
-
-      let pointsR = [
-        {
-          titleR: 'Alice Springs, AU',
+        },
+	{
+          title: 'Alice Springs, AU',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -577,7 +536,7 @@
           }
         },
         {
-          titleR: 'Gansu, CN',
+          title: 'Gansu, CN',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -586,7 +545,7 @@
           }
         },
         {
-          titleR: 'South Pole, AQ',
+          title: 'South Pole, AQ',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -595,7 +554,7 @@
           }
         },
         {
-          titleR: 'Chile, SA',
+          title: 'Chile, SA',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -604,7 +563,7 @@
           }
         },
         {
-          titleR: 'Sabah, MA',
+          title: 'Sabah, MA',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -613,7 +572,7 @@
           }
         },
         {
-          titleR: 'Cancun, MX',
+          title: 'Cancun, MX',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -622,7 +581,7 @@
           }
         },
         {
-          titleR: 'Zambia, AF',
+          title: 'Zambia, AF',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -631,7 +590,7 @@
           }
         },
         {
-          titleR: 'Ash-Shahaniyah, QA',
+          title: 'Ash-Shahaniyah, QA',
           //flag: ,
           //country: flag.selectByAlpha3("cub"),
           coords: {
@@ -641,13 +600,13 @@
         }
       ]
 
-      let listR = document.getElementById('listR');
-      pointsR.forEach(p=>{
+      let list = document.getElementById('list');
+      points.forEach(p=>{
         let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
-        
-        let placesR = document.createElement('div');
-        placesR.innerText = p.titleR;
-        listR.appendChild(placesR);
+        let places = document.createElement('option');
+        places.innerText = p.title;
+        list.appendChild(places);
+
         
         let mesh = new THREE.Mesh(
           new THREE.SphereBufferGeometry(0.01, 32, 32),
@@ -660,7 +619,7 @@
 
         let currentQuaternion = new THREE.Quaternion();
         
-        placesR.addEventListener("click",()=>{
+        places.addEventListener("change",()=>{
           let o = {p:0};
           currentQuaternion.copy(group.quaternion);
           gsap.to(o,{
@@ -673,12 +632,125 @@
 
             }
           })
-
-
-          // let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng);
-          // group.quaternion.copy(coords.quaternion);
         })
       })
+
+
+
+
+//       let pointsR = [
+//         {
+//           titleR: 'Alice Springs, AU',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: -23.6980,
+//             lng: 133.8807
+//           }
+//         },
+//         {
+//           titleR: 'Gansu, CN',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: 36.0594,
+//             lng: 103.8263
+//           }
+//         },
+//         {
+//           titleR: 'South Pole, AQ',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: 90.0000,
+//             lng: 45.0000
+//           }
+//         },
+//         {
+//           titleR: 'Chile, SA',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: -35.6751,
+//             lng: -71.5430
+//           }
+//         },
+//         {
+//           titleR: 'Sabah, MA',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: 5.9788,
+//             lng: 116.0753
+//           }
+//         },
+//         {
+//           titleR: 'Cancun, MX',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: 21.1619,
+//             lng: -86.8515
+//           }
+//         },
+//         {
+//           titleR: 'Zambia, AF',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: -13.1339,
+//             lng: 27.8493
+//           }
+//         },
+//         {
+//           titleR: 'Ash-Shahaniyah, QA',
+//           //flag: ,
+//           //country: flag.selectByAlpha3("cub"),
+//           coords: {
+//             lat: 25.4106,
+//             lng: 51.1846
+//           }
+//         }
+//       ]
+
+//       let listR = document.getElementById('listR');
+//       pointsR.forEach(p=>{
+//         let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
+        
+//         let placesR = document.createElement('div');
+//         placesR.innerText = p.titleR;
+//         listR.appendChild(placesR);
+        
+//         let mesh = new THREE.Mesh(
+//           new THREE.SphereBufferGeometry(0.01, 32, 32),
+//           new THREE.MeshBasicMaterial({color: 0xffd700})
+//         );
+//         group.add(mesh);
+//         mesh.position.copy(coords.vector);
+
+//         let animatedQuaternion = new THREE.Quaternion();
+
+//         let currentQuaternion = new THREE.Quaternion();
+        
+//         placesR.addEventListener("click",()=>{
+//           let o = {p:0};
+//           currentQuaternion.copy(group.quaternion);
+//           gsap.to(o,{
+//             p:1,
+//             duration:1,
+//             onUpdate:()=>{
+
+//               animatedQuaternion.slerpQuaternions(currentQuaternion, coords.quaternion, o.p);
+//               group.quaternion.copy(animatedQuaternion);
+
+//             }
+//           })
+
+
+//           // let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng);
+//           // group.quaternion.copy(coords.quaternion);
+//         })
+//       })
 
       let line, uniforms;
       //let textR2 = new THREE.Mesh();
@@ -809,8 +881,8 @@
 
 
     //SPACE BACKGROUND
-    const spaceTexture = new THREE.TextureLoader().load('./earthbg.png');
-    //scenePlanet.background = spaceTexture;
+    const spaceTexture = new THREE.TextureLoader().load('./images/earthbg.png');
+    scenePlanet.background = spaceTexture;
 
     const hiddenGeometry = new THREE.SphereBufferGeometry(0.98, 32, 32);
     const hiddenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
