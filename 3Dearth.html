@@ -531,7 +531,7 @@
       let list = document.getElementById('list');
       points.forEach(p=>{
         let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
-        let placesL = document.createElement('div');
+        let placesL = document.createElement('option');
         placesL.innerText = p.title;
         list.appendChild(placesL);
 
