@@ -611,7 +611,8 @@
       let list = document.getElementById('list');
       points.forEach(p=>{
         let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
-        let places = document.createElement('option');
+        let places = document.createElement('div');
+	places.style.fontSize = 'small';
         places.innerText = p.title;
         list.appendChild(places);
 
@@ -627,7 +628,7 @@
 
         let currentQuaternion = new THREE.Quaternion();
         
-        places.addEventListener("change",()=>{
+        places.addEventListener("click",()=>{
           let o = {p:0};
           currentQuaternion.copy(group.quaternion);
           gsap.to(o,{
