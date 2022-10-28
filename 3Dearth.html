@@ -603,6 +603,9 @@
       ]
 
       let list = document.getElementById('list');
+      let headR = document.createElement('h3');
+      
+      headR.innerText = 'Use two fingers/mouse scroll to zoom in/out and use two fingers/right mouse button to pan.';
       points.forEach(p=>{
         let coords = calcPosFromLatLonRad(p.coords.lat,p.coords.lng)
         let places = document.createElement('div');
