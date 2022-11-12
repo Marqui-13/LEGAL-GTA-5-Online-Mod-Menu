@@ -621,7 +621,7 @@
 
         
         let mesh = new THREE.Mesh(
-          new THREE.SphereBufferGeometry(0.01, 19, 19),
+          new THREE.SphereBufferGeometry(0.001, 19, 19),
           new THREE.MeshBasicMaterial({color: 0xffd700})
         );
         group.add(mesh);
@@ -999,7 +999,9 @@
       // fpControls.update(1.0);
       // flyControls.update(0.01);
       //earth.rotation.y += 0.005;
+      clouds.rotation.x += 0.0005;
       clouds.rotation.y += 0.0005;
+      clouds.rotation.z += 0.0005;
       atmosphere.rotation.x += 0.005;
       atmosphere.rotation.y += 0.005;
       atmosphere.rotation.z += 0.005;
@@ -1046,7 +1048,7 @@
 
 
 
-  <!-- GLTF LOADER LINK FOR SATELITES/MOON? FLOATING IN ORBIT 
+  <!-- GLTF LOADER LINK FOR SATELITES/MOON FLOATING IN ORBIT 
   <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <script type="module" src="./js/3DearthLogic.js"></script>
