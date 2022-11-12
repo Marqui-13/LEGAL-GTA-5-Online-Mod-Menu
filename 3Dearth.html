@@ -621,7 +621,7 @@
 
         
         let mesh = new THREE.Mesh(
-          new THREE.SphereBufferGeometry(0.001, 19, 19),
+          new THREE.SphereBufferGeometry(0.005, 19, 19),
           new THREE.MeshBasicMaterial({color: 0xffd700})
         );
         group.add(mesh);
@@ -1000,10 +1000,10 @@
       // flyControls.update(0.01);
       //earth.rotation.y += 0.005;
       clouds.rotation.x += 0.0005;
-      clouds.rotation.y += 0.0005;
-      clouds.rotation.z += 0.0005;
+      //clouds.rotation.y += 0.0005;
+      clouds.rotation.z -= 0.0005;
       atmosphere.rotation.x += 0.005;
-      atmosphere.rotation.y += 0.005;
+      atmosphere.rotation.y -= 0.01;
       atmosphere.rotation.z += 0.005;
       //textR1.rotateY(0.007);
       //textR2.rotateY(-0.007);
