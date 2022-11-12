@@ -409,7 +409,7 @@
 
 
 
-        // COORDINATES SECTION STARTS
+      // COORDINATES SECTION STARTS
       function calcPosFromLatLonRad(lat,lon){
         var phi = (lat) * Math.PI/180;
         var theta = (lon+180) * Math.PI/180;
@@ -621,7 +621,7 @@
 
         
         let mesh = new THREE.Mesh(
-          new THREE.SphereBufferGeometry(0.01, 32, 32),
+          new THREE.SphereBufferGeometry(0.01, 19, 19),
           new THREE.MeshBasicMaterial({color: 0xffd700})
         );
         group.add(mesh);
