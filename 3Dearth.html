@@ -622,7 +622,7 @@
         
         let mesh = new THREE.Mesh(
           new THREE.SphereBufferGeometry(0.005, 19, 19),
-          new THREE.MeshBasicMaterial({color: 0xffd700})
+          new THREE.MeshBasicMaterial({color: 0xf2a900 })
         );
         group.add(mesh);
         mesh.position.copy(coords.vector);
@@ -776,12 +776,12 @@
 
 
     //SPACE BACKGROUND
-    const spaceTexture = new THREE.TextureLoader().load('./images/earthbg.png');
+    //const spaceTexture = new THREE.TextureLoader().load('./images/earthbg.png');
     //scenePlanet.background = spaceTexture;
 
-    const hiddenGeometry = new THREE.SphereBufferGeometry(0.98, 32, 32);
-    const hiddenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const hiddenSphere = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
+    //const hiddenGeometry = new THREE.SphereBufferGeometry(0.98, 32, 32);
+    //const hiddenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    //const hiddenSphere = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
     // plane.position.set(0, -1, 0);
     // plane.rotateX(-Math.PI / 2);
     //scenePlanet.add(hiddenSphere);
