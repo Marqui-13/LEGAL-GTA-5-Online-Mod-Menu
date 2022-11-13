@@ -413,14 +413,14 @@
       function calcPosFromLatLonRad(lat,lon){
         var phi = (lat) * Math.PI/180;
         var theta = (lon+180) * Math.PI/180;
-        var theta1 = (270-lon) * Math.PI/180;
+        var theta2 = (270-lon) * Math.PI/180;
 
 
         let x = -(Math.cos(phi) * Math.cos(theta));
         let z = (Math.cos(phi) * Math.sin(theta));
         let y = (Math.sin(phi));
         let vector = {x,y,z};
-        let euler = new THREE.Euler(phi, theta1, 0, 'XYZ')
+        let euler = new THREE.Euler(phi, theta2, 0, 'XYZ')
         let quaternion = new THREE.Quaternion().setFromEuler(euler)
         return {vector, quaternion};
       }
@@ -1002,7 +1002,7 @@
       //earth.rotation.y += 0.005;
       clouds.rotation.x += 0.0005;
       //clouds.rotation.y += 0.0005;
-      clouds.rotation.z -= 0.0005;
+      clouds.rotation.z -= 0.00005;
       atmosphere.rotation.x += 0.005;
       atmosphere.rotation.y -= 0.01;
       atmosphere.rotation.z += 0.005;
