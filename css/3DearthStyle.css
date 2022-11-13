@@ -330,8 +330,8 @@ canvas {
   }
 
   #list div:hover{
-    border: 2px solid #ffd700;
-    color: #ffd700;
+    border: 2px solid #f2a900;
+    color: #f2a900;
     cursor: pointer;
   }
 
