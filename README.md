@@ -10,7 +10,7 @@ Explore the marvels of our planet with our cutting-edge 3D Earth web application
 - Three.js
 - GLSL (OpenGL Shading Language)
 - NPM
-- Netlify for deployment
+- Fleek & IPFS for deployment
 
 ## Features
 
