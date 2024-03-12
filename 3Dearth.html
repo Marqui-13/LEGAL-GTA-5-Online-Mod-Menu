@@ -1,3 +1,9 @@
+<!-- TO-DO -->
+<!-- Add search bar for cities w/ drop down list -->
+<!-- Rotate satellites and moon around earth -->
+<!-- Add GSAP animations w/ button/scroll-trigger to scroll in/out -->
+<!-- Make a night/dark mode and use the earth nightmap -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,6 +26,17 @@
     <title>3D Earth</title>
   </head>
   <body>
+    <div id="loader-wrapper">
+      <div id="loader">
+        <div id="progress-bar"></div>
+        <div id="loading-percentage">0%</div>
+      </div>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="city-search" placeholder="Search for cities..." />
+      <div id="dropdown-container" class="dropdown-container"></div>
+    </div>
     <!-- <div id="stats"></div> -->
 
     <!--Navigation Menu -->
@@ -216,11 +233,51 @@
       varying vec2 vertexUV;
 
       void main() {
-        gl_FragColor = vec4(vertexUV, 0.0, 1.0) ;
+        gl_FragColor = vec4(vertexUV, 0.0, 1.0);
       }
     </script>
 
     <!-- 360 SHADER END -->
+
+    <!-- STAR SHADERS START -->
+
+    <script type="x-shader/x-vertex" id="starVertexShader">
+      attribute float size;
+      attribute vec3 customColor;
+      varying vec3 vColor;
+
+      uniform float time;
+
+      void main() {
+          vColor = customColor;
+          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 10.0 + time) * 1.5, cos(position.y * 10.0 + time) * 1.5, 0.0), 1.0);
+          gl_PointSize = size * (300.0 / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+      }
+    </script>
+
+    <script type="x-shader/x-fragment" id="starFragmentShader">
+      uniform sampler2D pointTexture;
+      varying vec3 vColor;
+
+      void main() {
+        // Enhance glow effect by manipulating the gl_FragColor alpha based on the distance from the center of the point sprite
+        float distance = 2.0 * distance(gl_PointCoord, vec2(0.5, 0.5));
+        float alpha = 1.0 - distance;
+        alpha = alpha * alpha; // Increase the exponent to enhance glow
+
+        // Mixing white and yellow based on the passed color variable
+        vec3 colorMixed = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), vColor.r); // vColor.r is used to blend between white and yellow
+
+        gl_FragColor = vec4(colorMixed * alpha, alpha);
+
+        if (distance > 1.0) {
+          discard; // Discard fragments that are outside of the circular point sprite to ensure they don't render
+        }
+      }
+    </script>
+
+    <!-- STAR SHADERS END -->
 
     <script type="module">
       import * as THREE from "./modules/three.module.js";
@@ -232,9 +289,6 @@
       import { OrbitControls } from "./js/OrbitControls.js";
       import { FontLoader } from "./js/FontLoader.js";
       import { TextGeometry } from "./js/TextGeometry.js";
-
-      //const statsManager = new StatsManager();
-      var stars = [];
 
       // RENDERER
       const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -255,8 +309,16 @@
         10000
       );
 
-      camera.position.set(0, -3, 1);
-      camera.rotation.x = Math.PI / 2;
+      camera.position.set(0, 0, 500); // Adjust based on the size of your globe and desired view
+
+      // Ensure the camera is oriented correctly
+      camera.lookAt(new THREE.Vector3(0, 0, 0)); // Look at the center of the globe
+      camera.up.set(0, 0, 1); // Ensure the Y-axis is treated as up
+
+      //camera.position.set(0, 0, 0);
+      camera.position.z = 30;
+      //camera.lookAt(0, 0, 0);
+      //camera.rotation.x = Math.PI / 2;
 
       // LIGHT
       const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -285,19 +347,6 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       });
 
-      var myParent = document.body;
-
-      // STATS
-      // let container = document.getElementById( "globalArea" );
-      // let controller = new GIO.Controller( container );
-      // controller.enableStats();
-
-      // let stats;
-      // stats.domElement.style.position = 'absolute';
-      // stats.domElement.style.right = '0';
-      // stats.domElement.style.top = '0';
-      // document.body.appendChild( stats.dom );
-
       // Statistics
       let stats = new Stats();
       stats.domElement.style.position = "absolute";
@@ -305,57 +354,39 @@
       stats.domElement.style.zIndex = 100;
       document.body.appendChild(stats.domElement);
 
-      // var rightmousemove;
-      // document.addEventListener("mousedown", function(event){
-      //   rightmousemove = false;
-      //   if(event.button == 2){
-      //     rightmousemove = true;
-      //     return false;
-      //   //   // Right click
-      //   }
-      // });
-      // document.addEventListener("mousemove", function(event){
-      //   if(rightmousemove === true){
-      //      // Use stopImmediatePropagation to stop the other handeller from trigerring
-      //     event.stopImmediatePropagation();
-      //   }
-      // });
-
-      function create360() {
-        // EARTH
-        const texture360 = new THREE.TextureLoader().load("./images/sp.jpg");
-        // const sphereShaderMaterial = new THREE.ShaderMaterial({
-        // side: THREE.DoubleSide,
-        // vertexShader: document.getElementById("360VertexShader").textContent,
-        // fragmentShader: document.getElementById("360FragmentShader").textContent,
-
-        // blending: THREE.AdditiveBlending,
-        // depthTest: false,
-        // transparent: false,
-        // vertexColors: true,
-        // });
-        const sbg = new THREE.SphereBufferGeometry(10, 32, 32);
-        const sphere = new THREE.Mesh(
-          sbg,
-          new THREE.MeshBasicMaterial({
-            map: texture360,
-            side: THREE.BackSide,
-          })
+      // Create a loading manager
+      const manager = new THREE.LoadingManager();
+      manager.onStart = function (url, itemsLoaded, itemsTotal) {
+        console.log(
+          "Started loading: " +
+            url +
+            "\nLoaded " +
+            itemsLoaded +
+            " of " +
+            itemsTotal +
+            " files."
         );
-        scene360.add(sphere);
-      }
+      };
 
-      create360();
+      manager.onLoad = function () {
+        console.log("Loading complete!");
+        document.getElementById("loader-wrapper").style.display = "none";
+      };
+
+      manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+        const progress = (itemsLoaded / itemsTotal) * 100;
+        document.getElementById("progress-bar").style.width = progress + "%";
+        document.getElementById("loading-percentage").innerText =
+          Math.round(progress) + "%";
+      };
+      const textureLoader = new THREE.TextureLoader(manager);
 
       const group = new THREE.Group();
 
-      //function createPlanet(){
       const earthShaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
           globeTexture: {
-            value: new THREE.TextureLoader().load(
-              "./images/2_no_clouds_4k.jpg"
-            ),
+            value: textureLoader.load("./images/2_no_clouds_4k.jpg"),
           },
         },
         vertexShader: document.getElementById("earthVertexShader").textContent,
@@ -370,98 +401,78 @@
       const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
       const earth = new THREE.Mesh(ebg, earthShaderMaterial);
       group.add(earth);
-      //camera.lookAt(earth.position);
 
       // COORDINATES SECTION STARTS
-      function calcPosFromLatLonRad(lat, lon) {
-        var phi = (lat * Math.PI) / 180;
-        var theta = ((lon + 180) * Math.PI) / 180;
-        var theta2 = ((270 - lon) * Math.PI) / 180;
+      // function calcPosFromLatLonRad(lat, lon) {
+      //   var phi = (lat * Math.PI) / 180;
+      //   var theta = ((lon + 180) * Math.PI) / 180;
+      //   var theta2 = ((270 - lon) * Math.PI) / 180;
 
-        let x = -(Math.cos(phi) * Math.cos(theta));
-        let z = Math.cos(phi) * Math.sin(theta);
-        let y = Math.sin(phi);
-        let vector = { x, y, z };
-        let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
-        let quaternion = new THREE.Quaternion().setFromEuler(euler);
-        return { vector, quaternion };
-      }
+      //   let x = -(Math.cos(phi) * Math.cos(theta));
+      //   let z = Math.cos(phi) * Math.sin(theta);
+      //   let y = Math.sin(phi);
+      //   let vector = { x, y, z };
+      //   let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
+      //   let quaternion = new THREE.Quaternion().setFromEuler(euler);
+      //   return { vector, quaternion };
+      // }
 
-      //let parentElement = document.getElementById("my-parent-element");
-      //let flag = new CountryFlag(parentElement);
-      // <style>
-      //   i.flag:not(.icon):before {
-      //     content: "";
-      //     background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
-      //   }
-      //   i.flag:not(.icon), i.flag:not(.icon):before {
-      //   display: inline-block;
-      //   width: 16px;
-      //   height: 11px;
-      //   }
-      //   i.flag-america:before, i.flag-united-states:before, i.flag-us:before {
-      //   background-position: -72px -1950px!important;
-      //   }
-      //   i.flag:before {
-      //   display: inline-block;
-      //   width: 16px;
-      //   height: 11px;
-      //   content: "";
-      //   background: url(https://mdbootstrap.com/img/svg/flags.png) no-repeat -108px -1976px;
-      //   }
-      //   *, :after, :before {
-      //   box-sizing: border-box;
-      //   }
-      // </style>
+      const starMaterialUniforms = {
+        pointTexture: {
+          value: new THREE.TextureLoader().load("images/wc.png"),
+        },
+        time: { value: 0.0 },
+      };
 
       function createStarfield() {
-        const texture = new THREE.TextureLoader().load("images/whitecircle.png");
-
-        // Generate 200000 stars with a random position from -2000 to 2000
-        const NUM_STARS = 200000;
-        const vertices = [];
-        for (let i = 0; i < NUM_STARS; i++) {
-          const x = THREE.MathUtils.randFloatSpread(2000);
-          const y = THREE.MathUtils.randFloatSpread(2000);
-          const z = THREE.MathUtils.randFloatSpread(2000);
-          vertices.push(x, y, z);
-        }
-        // Stores the geometry for the stars as a float32 buffer array of 3 components x, y, and z
+        const starCount = 20000;
         const geometry = new THREE.BufferGeometry();
+        const positions = [];
+        const sizes = [];
+        const colors = [];
+
+        for (let i = 0; i < starCount; i++) {
+          positions.push(
+            THREE.Math.randFloatSpread(2000),
+            THREE.Math.randFloatSpread(2000),
+            THREE.Math.randFloatSpread(2000)
+          );
+          sizes.push(5.0 + Math.random() * 10.0);
+          colors.push(Math.random(), 0, 0);
+        }
+
         geometry.setAttribute(
           "position",
-          new THREE.Float32BufferAttribute(vertices, 3)
+          new THREE.Float32BufferAttribute(positions, 3)
         );
-        // Create a point material with a star texture
-        const material = new THREE.PointsMaterial({
-          color: 0x888888,
-          map: texture,
-          transparent: true,
-        });
-        // Create the mesh that contains the point geometry and material
-        const points = new THREE.Points(geometry, material);
-        scenePlanet.add(points);
-        return points;
+        geometry.setAttribute(
+          "size",
+          new THREE.Float32BufferAttribute(sizes, 1)
+        );
+        geometry.setAttribute(
+          "customColor",
+          new THREE.Float32BufferAttribute(colors, 3)
+        );
 
+        const material = new THREE.ShaderMaterial({
+          uniforms: starMaterialUniforms,
+          vertexShader: document.getElementById("starVertexShader").textContent,
+          fragmentShader:
+            document.getElementById("starFragmentShader").textContent,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true,
+          vertexColors: true,
+        });
+
+        const starField = new THREE.Points(geometry, material);
+        scenePlanet.add(starField);
       }
       createStarfield();
 
-      // generate starfield and add to scene
-      //const stars = createStarfield();
-      camera.position.z = 60;
-
-      // setup clock to check for delta time
       const clock = new THREE.Clock();
       const speed = 0.03;
       let dt = 0;
-
-      let sprite = new THREE.TextureLoader().load("images/wc.png");
-      let starMaterial = new THREE.PointsMaterial({
-        color: 0xaaaaaa,
-        size: 0.03,
-        map: sprite,
-      });
-
 
       let points = [
         {
@@ -617,46 +628,141 @@
         },
       ];
 
-      let list = document.getElementById("list");
-      let headR = document.createElement("h3");
+      // let list = document.getElementById("list");
+      // let headR = document.createElement("h3");
 
-      headR.innerText =
-        "Use two fingers/mouse scroll to zoom in/out and use two fingers/right mouse button to pan.";
-      points.forEach((p) => {
-        let coords = calcPosFromLatLonRad(p.coords.lat, p.coords.lng);
-        let places = document.createElement("div");
-        places.style.fontSize = "small";
-        places.innerText = p.title;
-        list.appendChild(places);
+      // headR.innerText =
+      //   "Use two fingers/mouse scroll to zoom in/out and use two fingers/right mouse button to pan.";
+      // points.forEach((p) => {
+      //   let coords = calcPosFromLatLonRad(p.coords.lat, p.coords.lng);
+      //   let places = document.createElement("div");
+      //   places.style.fontSize = "small";
+      //   places.innerText = p.title;
+      //   list.appendChild(places);
 
-        let mesh = new THREE.Mesh(
-          new THREE.SphereBufferGeometry(0.005, 19, 19),
-          new THREE.MeshBasicMaterial({ color: 0xf2a900 })
-        );
-        group.add(mesh);
-        mesh.position.copy(coords.vector);
+      //   let mesh = new THREE.Mesh(
+      //     new THREE.SphereBufferGeometry(0.005, 19, 19),
+      //     new THREE.MeshBasicMaterial({ color: 0xf2a900 })
+      //   );
+      //   group.add(mesh);
+      //   mesh.position.copy(coords.vector);
 
-        let animatedQuaternion = new THREE.Quaternion();
+      //   let animatedQuaternion = new THREE.Quaternion();
 
-        let currentQuaternion = new THREE.Quaternion();
+      //   let currentQuaternion = new THREE.Quaternion();
 
-        places.addEventListener("click", () => {
-          let o = { p: 0 };
-          currentQuaternion.copy(group.quaternion);
-          gsap.to(o, {
-            p: 1,
-            duration: 1,
-            onUpdate: () => {
-              animatedQuaternion.slerpQuaternions(
-                currentQuaternion,
-                coords.quaternion,
-                o.p
-              );
-              group.quaternion.copy(animatedQuaternion);
-            },
-          });
+      // places.addEventListener("click", () => {
+      //   rotateToCity(p.coords.lat, p.coords.lng);
+      // });
+
+      // Assuming the rest of your code remains unchanged
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("city-search");
+        const dropdownContainer = document.getElementById("dropdown-container");
+
+        function clearDropdown() {
+          dropdownContainer.innerHTML = ""; // Clear dropdown
+          dropdownContainer.style.display = "none"; // Hide dropdown
+        }
+
+        searchInput.addEventListener("input", function () {
+          const input = this.value.toLowerCase();
+          clearDropdown(); // Clear previous results
+
+          if (input.length > 0) {
+            const filteredPoints = points.filter((point) =>
+              point.title.toLowerCase().includes(input)
+            );
+            filteredPoints.forEach((point) => {
+              const item = document.createElement("div");
+              item.textContent = point.title;
+              item.className = "dropdown-item"; // Add this for styling
+              item.onclick = function () {
+                searchInput.value = point.title; // Display the full location name in the search bar
+                rotateToCity(point.coords.lat, point.coords.lng);
+                clearDropdown(); // Clear and hide the dropdown
+              };
+              dropdownContainer.appendChild(item);
+              dropdownContainer.style.display = "block"; // Show dropdown
+            });
+
+            if (filteredPoints.length === 0) {
+              dropdownContainer.style.display = "none";
+            }
+          } else {
+            clearDropdown();
+          }
+        });
+
+        // Optionally, listen for clicks outside the dropdown to close it
+        document.addEventListener("click", function (event) {
+          if (
+            !searchInput.contains(event.target) &&
+            !dropdownContainer.contains(event.target)
+          ) {
+            clearDropdown();
+          }
         });
       });
+
+      // Optional: Hide search results when clicking elsewhere
+      // document.body.addEventListener("click", function (e) {
+      //   if (e.target !== searchInput) {
+      //     searchResults.style.display = "none";
+      //   }
+      // });
+
+      function calcPosFromLatLonRad(lat, lon) {
+        var phi = (lat * Math.PI) / 180;
+        var theta = ((lon + 180) * Math.PI) / 180;
+        var theta2 = ((270 - lon) * Math.PI) / 180;
+
+        let x = -(Math.cos(phi) * Math.cos(theta));
+        let z = Math.cos(phi) * Math.sin(theta);
+        let y = Math.sin(phi);
+        let vector = { x, y, z };
+        let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
+        let quaternion = new THREE.Quaternion().setFromEuler(euler);
+        return { vector, quaternion };
+      }
+
+      function rotateToCity(lat, lon) {
+        const {quaternion} = calcPosFromLatLonRad(lat, lon);
+        // Convert latitude and longitude from degrees to radians
+        // var phi = THREE.MathUtils.degToRad(90 - lat); // Convert latitude to polar angle
+        // var theta = THREE.MathUtils.degToRad(lon + 180); // Convert longitude to azimuthal angle
+
+        // // Cartesian coordinates of the target location on a unit sphere
+        // let x = Math.sin(phi) * Math.cos(theta);
+        // let y = Math.cos(phi);
+        // let z = Math.sin(phi) * Math.sin(theta);
+
+        // // Target position for the camera
+        // let targetPosition = new THREE.Vector3(x, y, z).multiplyScalar(100); // Assuming your globe has a radius of 100 units
+
+        // // Direction from the globe's center to the target position
+        // let targetDirection = targetPosition.clone().normalize();
+
+        // // Calculate a quaternion that represents the rotation needed to align the globe's north pole (0,1,0) with the target direction
+        // let quaternion = new THREE.Quaternion().setFromUnitVectors(
+        //   new THREE.Vector3(0, 1, 0),
+        //   targetDirection
+        // );
+
+        // Apply the quaternion to rotate the globe smoothly
+        gsap.to(group.quaternion, {
+          x: quaternion.x,
+          y: quaternion.y,
+          z: quaternion.z,
+          w: quaternion.w,
+          duration: 2,
+          ease: "power3.inOut",
+          onUpdate: function () {
+            controls.update();
+          },
+        });
+      }
 
       let line, uniforms;
       //let textR2 = new THREE.Mesh();
@@ -664,43 +770,6 @@
       fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
         init(font);
         animate();
-
-        // textGeo.computeBoundingBox();
-        // const centerOffsetX = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-        // const centerOffsetY = -0.5 * ( textGeo.boundingBox.max.y - textGeo.boundingBox.min.y );
-        // const centerOffsetZ = 0.5 * ( textGeo.boundingBox.max.z - textGeo.boundingBox.min.z );
-
-        // let mat1 = [
-        // new THREE.MeshLambertMaterial({ color: 0xffd700}),
-        // new THREE.MeshLambertMaterial({color: 0x00befc })
-        // ]
-
-        // let mat2 = [
-        // new THREE.MeshLambertMaterial({ color: 0xffd700}),
-        // new THREE.MeshLambertMaterial({color: 0x00ff00 })
-        // ]
-
-        // const text1 = new THREE.Mesh(textGeo, mat1);
-        // const text2 = new THREE.Mesh(textGeo, mat2);
-        // textR1 = text1;
-        // textR2 = text2;
-
-        // text1.castShadow = true;
-        // text1.position.x = -2.3;
-        // text1.position.y = 2.5;
-        // text1.position.z = 0;
-        // textR1.rotation.y = 0;
-
-        // text2.castShadow = true;
-        // text2.position.x = 2.5;
-        // text2.position.y = 2.5;
-        // text2.position.z = 0;
-        // //controls.enabled = false;
-        // //textMesh.rotation.x = 0;
-        // textR2.rotation.y = Math.PI;
-
-        //scenePlanet.add(text1);
-        // scenePlanet.add(text2);
       });
 
       function init(font) {
@@ -757,32 +826,11 @@
 
       scenePlanet.add(group);
 
-      // let button = document.createElement('Button');
-      // button.innerHTML = "Title";
-      // button.style = "color: white; z-index: 100;";
-      // document.body.appendChild(button);
-
-      //}
-
-      //createPlanet();
-
-      //SPACE BACKGROUND
-      //const spaceTexture = new THREE.TextureLoader().load('./images/earthbg.png');
-      //scenePlanet.background = spaceTexture;
-
-      //const hiddenGeometry = new THREE.SphereBufferGeometry(0.98, 32, 32);
-      //const hiddenMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      //const hiddenSphere = new THREE.Mesh(hiddenGeometry, hiddenMaterial);
-      // plane.position.set(0, -1, 0);
-      // plane.rotateX(-Math.PI / 2);
-      //scenePlanet.add(hiddenSphere);
-
       // ATMOSPHERE
       const atmosphereShaderMaterial = new THREE.ShaderMaterial({
         vertexShader: document.getElementById("atmVertexShader").textContent,
         fragmentShader:
           document.getElementById("atmFragmentShader").textContent,
-
         blending: THREE.AdditiveBlending,
         side: THREE.BackSide,
       });
@@ -795,9 +843,7 @@
       const cloudShaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
           globeTexture: {
-            value: new THREE.TextureLoader().load(
-              "./images/fair_clouds_4k.png"
-            ),
+            value: textureLoader.load("./images/fair_clouds_4k.png"),
           },
         },
         vertexShader: document.getElementById("cloudVertexShader").textContent,
@@ -900,7 +946,7 @@
 
       //controls.target = scenePlanet.position;
 
-      controls.minDistance = 0;
+      controls.minDistance = 5;
       controls.maxDistance = 1000;
 
       controls.enableDamping = false;
@@ -915,58 +961,17 @@
       controls.enableRotate = false;
       controls.rotateSpeed = 1.0;
 
-      // scenePlanet.addEventListener('click', function () {
-      //   controls.enabled = false;
-      // });
-      // controls.addEventListener('mouseUp', function () {
-      //   controls.enabled = false;
-      // });
-
-      // // Keyboard Controls
-      // document.onkeydown = function (e) {
-      //   //console.log(e);
-      //   // left arrow key
-      //   if (e.keyCode === 37) {
-      //     earth.position.x -= 1;
-      //   // right arrow key
-      //   } else if (e.keyCode === 39) {
-      //     earth.position.x += 1;
-      //   // up arrow key
-      //   } else if (e.keyCode === 38) {
-      //     earth.position.z -= 1;
-      //   // down arrow key
-      //   } else if (e.keyCode === 40) {
-      //     earth.position.z += 1;
-      //   }
-      //};
-
-      // CONTROLS SECTION ENDS
-
-      // const mouse = {
-      //   x: undefined,
-      //   y: undefined
-      // }
-
-      // addEventListener('mousemove', () => {
-      //   mouse.x = (event.clientX / innerWidth) * 2 - 1
-      //   mouse.y = -(event.clientY / innerHeight) * 2 - 1
-      // });
-
       // Animate
       function animate() {
         // dControls.update();
         // fpControls.update(1.0);
         // flyControls.update(0.01);
-        //mesh.position.x += 0.005;
-        //earth.rotation.y += 0.005;
-        //clouds.rotation.x += 0.0005;
-        //clouds.rotation.y += 0.0005;
+
         clouds.rotation.z -= 0.0008;
+
         atmosphere.rotation.x += 0.005;
         atmosphere.rotation.y -= 0.01;
         atmosphere.rotation.z += 0.005;
-        //textR1.rotateY(0.007);
-        //textR2.rotateY(-0.007);
 
         dt = clock.getDelta();
         camera.position.z -= speed * dt;
@@ -978,10 +983,11 @@
         const time = Date.now() * 0.001;
 
         line.rotation.y = 0.7 * time;
-        //line.rotation.x = time;
 
         uniforms.amplitude.value = 0.3 * Math.sin(0.2 * time);
         uniforms.color.value.offsetHSL(0.05, 2, 0);
+
+        starMaterialUniforms.time.value += 0.01;
 
         const attributes = line.geometry.attributes;
         const array = attributes.displacement.array;
@@ -994,19 +1000,11 @@
 
         attributes.displacement.needsUpdate = true;
 
-        //group.rotation.y = mouse.x * 0.5;
-        // mesh.rotation.y += 0.005;
-        // mesh1.rotation.y += 0.005;
-        // mesh2.rotation.y += 0.005;
-        // mesh3.rotation.y += 0.005;
-        // mesh4.rotation.y += 0.005;
         controls.update();
         requestAnimationFrame(animate);
         renderer.render(scenePlanet, camera);
         stats.update();
       }
-
-      //animate();
     </script>
     <!-- JS SECTION ENDS -->
 
@@ -1015,6 +1013,5 @@
     <!-- GLTF LOADER LINK FOR SATELITES/MOON FLOATING IN ORBIT 
   <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script type="module" src="./js/3DearthLogic.js"></script>
   </body>
 </html>
