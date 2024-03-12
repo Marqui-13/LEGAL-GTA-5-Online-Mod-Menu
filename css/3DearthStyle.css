@@ -35,13 +35,6 @@
   100% { transform: rotate(360deg); }
 }
 
-#progress-bar {
-  width: 0%;
-  height: 20px;
-  background-color: #3498db;
-  transition: width 0.4s ease;
-}
-
 #loading-percentage {
   color: #fff;
   text-align: center;
@@ -57,26 +50,45 @@
 }
 
 #city-search {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-}
-
-#search-results {
-  position: absolute;
   width: 100%;
-  background: white;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+#dropdown-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
   border: 1px solid #ccc;
-  display: none; /* Initially hidden */
+  border-top: none; /* Remove top border */
+  background-color: white;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  overflow: hidden; /* Ensure the border radius applies to children */
+  display: none; /* Hide by default */
 }
 
-#search-results div {
-  padding: 5px;
+#dropdown-container div {
+  padding: 10px;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-#search-results div:hover {
-  background-color: #f0f0f0;
+#dropdown-container div:hover {
+  background-color: #f2f2f2;
+}
+
+.clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #999;
 }
 
 nav{
