@@ -1,8 +1,5 @@
 <!-- TO-DO -->
-<!-- Add search bar for cities w/ drop down list -->
 <!-- Rotate satellites and moon around earth -->
-<!-- Add GSAP animations w/ button/scroll-trigger to scroll in/out -->
-<!-- Make a night/dark mode and use the earth nightmap -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +25,7 @@
   <body>
     <div id="loader-wrapper">
       <div id="loader">
+        <!-- <div id="progress-bar"></div> -->
         <div id="loading-percentage">0%</div>
       </div>
     </div>
@@ -312,7 +310,7 @@
 
       // Ensure the camera is oriented correctly
       camera.lookAt(new THREE.Vector3(0, 0, 0)); // Look at the center of the globe
-      camera.up.set(0, 0, 1); // Ensure the Y-axis is treated as up
+      camera.up.set(0, 1, 0); // Ensure the Y-axis is treated as up
 
       //camera.position.set(0, 0, 0);
       camera.position.z = 30;
@@ -374,7 +372,6 @@
 
       manager.onProgress = function (url, itemsLoaded, itemsTotal) {
         const progress = (itemsLoaded / itemsTotal) * 100;
-        document.getElementById("progress-bar").style.width = progress + "%";
         document.getElementById("loading-percentage").innerText =
           Math.round(progress) + "%";
       };
