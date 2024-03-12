@@ -373,6 +373,7 @@
       manager.onLoad = function () {
         console.log("Loading complete!");
         document.getElementById("loader-wrapper").style.display = "none";
+        document.querySelector(".search-container").style.display = "block";
       };
 
       manager.onProgress = function (url, itemsLoaded, itemsTotal) {
