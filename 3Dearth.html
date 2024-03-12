@@ -1,5 +1,8 @@
 <!-- TO-DO -->
+<!-- Add search bar for cities w/ drop down list -->
 <!-- Rotate satellites and moon around earth -->
+<!-- Add GSAP animations w/ button/scroll-trigger to scroll in/out -->
+<!-- Make a night/dark mode and use the earth nightmap -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -171,22 +174,26 @@
 
     <!-- CLOUD SHADER START -->
     <script type="x-shader/x-vertex" id="cloudVertexShader">
-      varying vec2 vertexUV;
+      uniform float time;
+      varying vec2 vUv;
+      varying float vFade;
 
       void main() {
-        vertexUV = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+          vUv = uv + vec2(time * 0.05, 0.0); // Adjust for cloud movement
+          vFade = sin(uv.y * 3.14); // Fade factor based on latitude, sin ensures a smooth gradient
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     </script>
 
     <script type="x-shader/x-fragment" id="cloudFragmentShader">
-      varying vec2 vertexUV;
-      uniform sampler2D globeTexture;
+      uniform sampler2D cloudTexture;
+    varying vec2 vUv;
+    varying float vFade;
 
-
-      void main() {
-        gl_FragColor = texture2D(globeTexture, vertexUV);
-      }
+    void main() {
+        vec4 texel = texture2D(cloudTexture, vUv);
+        gl_FragColor = vec4(texel.rgb, texel.a * vFade); // Apply fade effect based on latitude
+    }
     </script>
     <!-- CLOUD SHADER END -->
 
@@ -397,21 +404,6 @@
       const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
       const earth = new THREE.Mesh(ebg, earthShaderMaterial);
       group.add(earth);
-
-      // COORDINATES SECTION STARTS
-      // function calcPosFromLatLonRad(lat, lon) {
-      //   var phi = (lat * Math.PI) / 180;
-      //   var theta = ((lon + 180) * Math.PI) / 180;
-      //   var theta2 = ((270 - lon) * Math.PI) / 180;
-
-      //   let x = -(Math.cos(phi) * Math.cos(theta));
-      //   let z = Math.cos(phi) * Math.sin(theta);
-      //   let y = Math.sin(phi);
-      //   let vector = { x, y, z };
-      //   let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
-      //   let quaternion = new THREE.Quaternion().setFromEuler(euler);
-      //   return { vector, quaternion };
-      // }
 
       const starMaterialUniforms = {
         pointTexture: {
@@ -624,35 +616,6 @@
         },
       ];
 
-      // let list = document.getElementById("list");
-      // let headR = document.createElement("h3");
-
-      // headR.innerText =
-      //   "Use two fingers/mouse scroll to zoom in/out and use two fingers/right mouse button to pan.";
-      // points.forEach((p) => {
-      //   let coords = calcPosFromLatLonRad(p.coords.lat, p.coords.lng);
-      //   let places = document.createElement("div");
-      //   places.style.fontSize = "small";
-      //   places.innerText = p.title;
-      //   list.appendChild(places);
-
-      //   let mesh = new THREE.Mesh(
-      //     new THREE.SphereBufferGeometry(0.005, 19, 19),
-      //     new THREE.MeshBasicMaterial({ color: 0xf2a900 })
-      //   );
-      //   group.add(mesh);
-      //   mesh.position.copy(coords.vector);
-
-      //   let animatedQuaternion = new THREE.Quaternion();
-
-      //   let currentQuaternion = new THREE.Quaternion();
-
-      // places.addEventListener("click", () => {
-      //   rotateToCity(p.coords.lat, p.coords.lng);
-      // });
-
-      // Assuming the rest of your code remains unchanged
-
       document.addEventListener("DOMContentLoaded", function () {
         const searchInput = document.getElementById("city-search");
         const dropdownContainer = document.getElementById("dropdown-container");
@@ -673,14 +636,14 @@
             filteredPoints.forEach((point) => {
               const item = document.createElement("div");
               item.textContent = point.title;
-              item.className = "dropdown-item"; // Add this for styling
+              item.className = "dropdown-item";
               item.onclick = function () {
-                searchInput.value = point.title; // Display the full location name in the search bar
+                searchInput.value = point.title;
                 rotateToCity(point.coords.lat, point.coords.lng);
-                clearDropdown(); // Clear and hide the dropdown
+                clearDropdown();
               };
               dropdownContainer.appendChild(item);
-              dropdownContainer.style.display = "block"; // Show dropdown
+              dropdownContainer.style.display = "block"; 
             });
 
             if (filteredPoints.length === 0) {
@@ -725,26 +688,6 @@
 
       function rotateToCity(lat, lon) {
         const {quaternion} = calcPosFromLatLonRad(lat, lon);
-        // Convert latitude and longitude from degrees to radians
-        // var phi = THREE.MathUtils.degToRad(90 - lat); // Convert latitude to polar angle
-        // var theta = THREE.MathUtils.degToRad(lon + 180); // Convert longitude to azimuthal angle
-
-        // // Cartesian coordinates of the target location on a unit sphere
-        // let x = Math.sin(phi) * Math.cos(theta);
-        // let y = Math.cos(phi);
-        // let z = Math.sin(phi) * Math.sin(theta);
-
-        // // Target position for the camera
-        // let targetPosition = new THREE.Vector3(x, y, z).multiplyScalar(100); // Assuming your globe has a radius of 100 units
-
-        // // Direction from the globe's center to the target position
-        // let targetDirection = targetPosition.clone().normalize();
-
-        // // Calculate a quaternion that represents the rotation needed to align the globe's north pole (0,1,0) with the target direction
-        // let quaternion = new THREE.Quaternion().setFromUnitVectors(
-        //   new THREE.Vector3(0, 1, 0),
-        //   targetDirection
-        // );
 
         // Apply the quaternion to rotate the globe smoothly
         gsap.to(group.quaternion, {
@@ -761,7 +704,6 @@
       }
 
       let line, uniforms;
-      //let textR2 = new THREE.Mesh();
       let fontLoader = new FontLoader();
       fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
         init(font);
@@ -838,8 +780,9 @@
       // Clouds
       const cloudShaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
-          globeTexture: {
+          cloudTexture: {
             value: textureLoader.load("./images/fair_clouds_4k.png"),
+            time: { value: 0 }
           },
         },
         vertexShader: document.getElementById("cloudVertexShader").textContent,
@@ -853,8 +796,6 @@
       });
       const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32);
       const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
-      //const group = new THREE.Group()
-      //group.add(clouds)
       scenePlanet.add(clouds);
 
       // function getCurve(p1,p2) {
@@ -963,7 +904,10 @@
         // fpControls.update(1.0);
         // flyControls.update(0.01);
 
-        clouds.rotation.z -= 0.0008;
+        clouds.rotation.y -= 0.0008;
+        clouds.rotation.z += 0.0008;
+        clouds.rotation.x += 0.0008;
+
 
         atmosphere.rotation.x += 0.005;
         atmosphere.rotation.y -= 0.01;
@@ -984,6 +928,11 @@
         uniforms.color.value.offsetHSL(0.05, 2, 0);
 
         starMaterialUniforms.time.value += 0.01;
+
+        if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
+          const delta = clock.getDelta(); // Make sure `clock` is accessible
+          cloudShaderMaterial.uniforms.time.value += delta * 0.2;
+        }
 
         const attributes = line.geometry.attributes;
         const array = attributes.displacement.array;
