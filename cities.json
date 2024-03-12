@@ -1,0 +1,19 @@
+[
+  {
+    "title": "Current Location",
+    "coords": {"lat": 42.496815, "lng": -92.330469}
+  },
+  {
+    "title": "Chicago, US",
+    "coords": {"lat": 41.8781, "lng": -87.6298}
+  },
+  {
+    "title": "New Delhi, IN",
+    "coords": {"lat": 28.6139, "lng": 77.209}
+  },
+  {
+    "title": "Kyiv, UA",
+    "coords": {"lat": 50.4501, "lng": 30.5234}
+  },
+  // Add more cities as needed
+]
