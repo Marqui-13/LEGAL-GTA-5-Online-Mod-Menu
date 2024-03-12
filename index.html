@@ -355,6 +355,31 @@
       stats.domElement.style.bottom = "0px";
       stats.domElement.style.zIndex = 100;
       document.body.appendChild(stats.domElement);
+      
+      // Loading Manager
+      const manager = new THREE.LoadingManager();
+      manager.onStart = function (url, itemsLoaded, itemsTotal) {
+        console.log(
+          "Started loading: " +
+            url +
+            "\nLoaded " +
+            itemsLoaded +
+            " of " +
+            itemsTotal +
+            " files."
+        );
+      };
+
+      manager.onLoad = function () {
+        console.log("Loading complete!");
+        document.getElementById("loader-wrapper").style.display = "none";
+      };
+
+      manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+        const progress = (itemsLoaded / itemsTotal) * 100;
+        document.getElementById("loading-percentage").innerText =
+          Math.round(progress) + "%";
+      };
 
       const textureLoader = new THREE.TextureLoader(manager);
 
@@ -591,31 +616,6 @@
       ];
 
       document.addEventListener("DOMContentLoaded", function () {
-        // Create a loading manager
-      const manager = new THREE.LoadingManager();
-      manager.onStart = function (url, itemsLoaded, itemsTotal) {
-        console.log(
-          "Started loading: " +
-            url +
-            "\nLoaded " +
-            itemsLoaded +
-            " of " +
-            itemsTotal +
-            " files."
-        );
-      };
-
-      manager.onLoad = function () {
-        console.log("Loading complete!");
-        document.getElementById("loader-wrapper").style.display = "none";
-        document.querySelector(".search-container").style.display = "initial";
-      };
-
-      manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-        const progress = (itemsLoaded / itemsTotal) * 100;
-        document.getElementById("loading-percentage").innerText =
-          Math.round(progress) + "%";
-      };
         const searchInput = document.getElementById("city-search");
         const dropdownContainer = document.getElementById("dropdown-container");
 
