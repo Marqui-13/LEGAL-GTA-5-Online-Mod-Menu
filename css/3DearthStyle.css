@@ -46,7 +46,7 @@
 
 .search-container {
   position: fixed;
-  top: 100px;
+  top: 110px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
@@ -588,7 +588,10 @@ canvas {
   
 }
 
-@media(max-width: 700px) {
+@media(max-width: 768px) {
+  h3 {
+    font-size: 15px;
+  }
   footer .footer-links{
     width: 15%;
   }
