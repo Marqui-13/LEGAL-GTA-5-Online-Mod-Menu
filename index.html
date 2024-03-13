@@ -265,18 +265,15 @@
       varying vec3 vColor;
 
       void main() {
-        // Enhance glow effect by manipulating the gl_FragColor alpha based on the distance from the center of the point sprite
         float distance = 2.0 * distance(gl_PointCoord, vec2(0.5, 0.5));
         float alpha = 1.0 - distance;
-        alpha = alpha * alpha; // Increase the exponent to enhance glow
+        alpha = alpha * alpha; // Enhance glow
 
-        // Mixing white and yellow based on the passed color variable
-        vec3 colorMixed = mix(vec3(1.0, 1.0, 1.0), vec3(1.0, 1.0, 0.0), vColor.r); // vColor.r is used to blend between white and yellow
-
-        gl_FragColor = vec4(colorMixed * alpha, alpha);
+        // Directly use vColor for coloring the star
+        gl_FragColor = vec4(vColor * alpha, alpha);
 
         if (distance > 1.0) {
-          discard; // Discard fragments that are outside of the circular point sprite to ensure they don't render
+          discard; // Ensures circular shape
         }
       }
     </script>
@@ -500,7 +497,7 @@
 
       // atmosphereShaderMaterial.uniforms.viewDirection = { value: viewDirection };
 
-      const abg = new THREE.SphereBufferGeometry(1.5, 32, 32);
+      const abg = new THREE.SphereBufferGeometry(1.75, 32, 32);
       const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
       //atmosphere.scale.set(1.1,1.1,1.1);
       scenePlanet.add(atmosphere);
@@ -547,8 +544,21 @@
             THREE.Math.randFloatSpread(2000),
             THREE.Math.randFloatSpread(2000)
           );
+
           sizes.push(5.0 + Math.random() * 10.0);
-          colors.push(Math.random(), 0, 0);
+          
+          // Randomly choose color: white, yellow, or blue
+          const colorChoice = Math.random();
+          if (colorChoice < 0.33) {
+            // White
+            colors.push(1, 1, 1); // R, G, B
+          } else if (colorChoice < 0.66) {
+            // Yellow
+            colors.push(1, 1, 0); // R, G, B
+          } else {
+            // Blue
+            colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
+          }
         }
 
         geometry.setAttribute(
@@ -844,7 +854,7 @@
 
       //getCurve(pos,pos1);
 
-      // CONTROLS  SECTION STARTS
+      // CONTROLS SECTION STARTS
 
       // Drag Controls
       //let objects = [box];
