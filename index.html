@@ -8,8 +8,6 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <script src="../modules/gio.module.js"></script> -->
-    <!-- <script src="../modules/stats.min.js"></script>  -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -19,8 +17,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link rel="stylesheet" href="./css/3DearthStyle.css" />
-    <!-- <link rel="stylesheet" href="country-flag.css"> -->
-    <!-- <script src="country-flag.js"></script> -->
     <title>3D Earth</title>
   </head>
   <body>
@@ -88,14 +84,6 @@
       </h3>
     </nav>
 
-    <!-- FLAGS -->
-    <!-- <div id="my-parent-element"></div>  -->
-
-    <!--  PLACES LISTS -->
-    <!-- <div id="list"></div> -->
-    <!--     <div id="listR"></div>      
- -->
-
     <!--FOOTER-->
     <!--       <footer>
       <ul class="footer-links">
@@ -109,7 +97,6 @@
       </footer> -->
 
     <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION STARTS -->
-
     <!-- TEXT FONT SHADERS START -->
     <script type="x-shader/x-vertex" id="vertexshaderText">
 
@@ -177,10 +164,11 @@
       uniform float time;
       varying vec2 vUv;
       varying float vFade;
+      const float PI = 3.141592653589793;
 
       void main() {
           vUv = uv + vec2(time * 0.05, 0.0); // Adjust for cloud movement
-          vFade = sin(uv.y * 3.14); // Fade factor based on latitude, sin ensures a smooth gradient
+          vFade = 0.5 * (sin(uv.y * PI)); // Fade factor based on latitude, sin ensures a smooth gradient
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     </script>
@@ -192,7 +180,8 @@
 
       void main() {
           vec4 texel = texture2D(cloudTexture, vUv);
-          gl_FragColor = vec4(texel.rgb, texel.a * vFade); // Apply fade effect based on latitude
+          float fadeSmooth = smoothstep(0.0, 1.0, vFade); // Smoother transition
+          gl_FragColor = vec4(texel.rgb, texel.a * fadeSmooth); // Apply smooth fade
       }
     </script>
     <!-- CLOUD SHADERS END -->
@@ -243,6 +232,79 @@
 
     <!-- 360 SHADERS END -->
 
+    <!-- MARKER SHADERS START -->
+    <!-- CONE MARKER SHADERS START -->
+    <script type="x-shader/x-vertex" id="coneVertexShader">
+      attribute float size;
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+
+      void main() {
+          vPosition = position;
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    </script>
+
+    <script type="x-shader/x-fragment" id="coneFragmentShader">
+      uniform float time;
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+
+      void main() {
+          // Normalized pulsation based on time
+          float pulse = (sin(time * 3.0) + 1.0) / 2.0;
+
+          // Intensity based on the angle between the normal and view direction for a faux-glow effect
+          float angleIntensity = pow(abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
+
+          // Combine pulse and angle intensity for the final color
+          vec3 color = mix(vec3(1.0, 0.5, 0.0), vec3(1.0, 1.0, 0.5), pulse) * angleIntensity;
+
+          // Output the color with a dynamic alpha value for the pulsating glow effect
+          gl_FragColor = vec4(color, angleIntensity * pulse);
+      }
+    </script>
+    <!-- CONE MARKER SHADERS END -->
+
+    <!-- SPHERE MARKER SHADERS START -->
+    <script type="x-shader/x-vertex" id="sphereVertexShader">
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+    
+      void main() {
+          vPosition = position;
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    </script>
+
+    <script type="x-shader/x-fragment" id="sphereFragmentShader">
+      uniform float time; // Passed in from JavaScript to control animation
+      varying vec3 vPosition; // Position passed from vertex shader
+      varying vec3 vNormal; // Normal passed from vertex shader
+    
+      void main() {
+          // Calculate a pulsing value between 0.0 and 1.0
+          float pulse = (sin(time * 3.0) + 1.0) / 2.0;
+    
+          // Calculate intensity based on the angle between the normal and view direction
+          float angleIntensity = dot(normalize(vNormal), vec3(0.0, 0.0, 1.0));
+    
+          // Base color for the sphere, golden color
+          vec3 baseColor = vec3(1.0, 0.84, 0.0); // Golden color
+    
+          // Combine base color with the pulsing effect
+          vec4 color = vec4(baseColor * pulse, pulse * angleIntensity);
+    
+          // Output the final color
+          gl_FragColor = color;
+      }
+    </script>
+
+    <!-- SPHERE MARKER SHADERS END -->
+    <!-- MARKER SHADERS END -->
+
     <!-- STAR SHADERS START -->
 
     <script type="x-shader/x-vertex" id="starVertexShader">
@@ -279,9 +341,7 @@
     </script>
 
     <!-- STAR SHADERS END -->
-
     <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION ENDS -->
-
 
     <!-- JS SECTION STARTS -->
     <script type="module">
@@ -290,7 +350,6 @@
       // import { FirstPersonControls } from "./modules/FirstPersonControls.js";
       // import {FlyControls} from "./modules/FlyControls.js";
       import Stats from "./js/Stats.js";
-      //import * as GIO from './modules/gio.modules.js';
       import { OrbitControls } from "./js/OrbitControls.js";
       import { FontLoader } from "./js/FontLoader.js";
       import { TextGeometry } from "./js/TextGeometry.js";
@@ -314,16 +373,11 @@
         10000
       );
 
-      camera.position.set(0, 0, 500); // Adjust based on the size of your globe and desired view
-
-      // Ensure the camera is oriented correctly
-      camera.lookAt(new THREE.Vector3(0, 0, 0)); // Look at the center of the globe
-      camera.up.set(0, 1, 0); // Ensure the Y-axis is treated as up
-
-      //camera.position.set(0, 0, 0);
+      camera.position.set(0, 0, 500);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+      camera.up.set(0, 1, 0);
       camera.position.z = 30;
-      //camera.lookAt(0, 0, 0);
-      //camera.rotation.x = Math.PI / 2;
+      camera.rotation.x = Math.PI / 2;
 
       // LIGHT
       const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -340,15 +394,12 @@
 
       // RESIZING
       window.addEventListener("resize", () => {
-        // Update sizes
         sizes.width = window.innerWidth;
         sizes.height = window.innerHeight;
 
-        // Update camera
         camera.aspect = sizes.width / sizes.height;
         camera.updateProjectionMatrix();
 
-        // Update renderer
         renderer.setSize(sizes.width, sizes.height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       });
@@ -359,6 +410,61 @@
       stats.domElement.style.bottom = "0px";
       stats.domElement.style.zIndex = 100;
       document.body.appendChild(stats.domElement);
+
+      const searchInput = document.getElementById("city-search");
+      const dropdownContainer = document.getElementById("dropdown-container");
+      document.addEventListener("DOMContentLoaded", function () {
+
+        function clearDropdown() {
+          dropdownContainer.innerHTML = "";
+          dropdownContainer.style.display = "none";
+        }
+
+        searchInput.addEventListener("input", function () {
+          const input = this.value.toLowerCase();
+          clearDropdown();
+
+          if (input.length > 0) {
+            const filteredPoints = points.filter((point) =>
+              point.title.toLowerCase().includes(input)
+            );
+            filteredPoints.forEach((point) => {
+              const item = document.createElement("div");
+              item.textContent = point.title;
+              item.className = "dropdown-item";
+              item.onclick = function () {
+                searchInput.value = point.title;
+                rotateToCity(point.coords.lat, point.coords.lng);
+
+                if (marker) {
+                    group.remove(marker);
+                }
+                marker = createMarker(point.coords.lat, point.coords.lng);
+                group.add(marker);
+
+                clearDropdown();
+              };
+              dropdownContainer.appendChild(item);
+              dropdownContainer.style.display = "block"; 
+            });
+
+            if (filteredPoints.length === 0) {
+              dropdownContainer.style.display = "none";
+            }
+          } else {
+            clearDropdown();
+          }
+        });
+
+        document.addEventListener("click", function (event) {
+          if (
+            !searchInput.contains(event.target) &&
+            !dropdownContainer.contains(event.target)
+          ) {
+            clearDropdown();
+          }
+        });
+      });
       
       // LOADING MANAGER
       const manager = new THREE.LoadingManager();
@@ -470,24 +576,7 @@
         scenePlanet.add(line);
       }
 
-      // ATMOSPHERE
-      // const cameraPosition = new THREE.Vector3();
-      // const earthPosition = new THREE.Vector3(0, 0, 0); // Adjust if your Earth is not centered at the origin
-
-      // // Update this every frame or when necessary
-      // camera.getWorldPosition(cameraPosition);
-      // const viewDirection = new THREE.Vector3().subVectors(earthPosition, cameraPosition).normalize();
-
-      // function updateShaderUniforms() {
-      //   const cameraPosition = new THREE.Vector3();
-      //   camera.getWorldPosition(cameraPosition);
-      //   atmosphereShaderMaterial.uniforms.cameraPos.value = cameraPosition;
-      // }
-
       const atmosphereShaderMaterial = new THREE.ShaderMaterial({
-        // uniforms: {
-        //   cameraPos: { value: new THREE.Vector3() },
-        // },
         vertexShader: document.getElementById("atmVertexShader").textContent,
         fragmentShader:
           document.getElementById("atmFragmentShader").textContent,
@@ -495,11 +584,8 @@
         side: THREE.BackSide,
       });
 
-      // atmosphereShaderMaterial.uniforms.viewDirection = { value: viewDirection };
-
       const abg = new THREE.SphereBufferGeometry(1.75, 32, 32);
       const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
-      //atmosphere.scale.set(1.1,1.1,1.1);
       scenePlanet.add(atmosphere);
 
       // CLOUDS
@@ -511,9 +597,7 @@
           },
         },
         vertexShader: document.getElementById("cloudVertexShader").textContent,
-        fragmentShader: document.getElementById("cloudFragmentShader")
-          .textContent,
-
+        fragmentShader: document.getElementById("cloudFragmentShader").textContent,
         blending: THREE.AdditiveBlending,
         depthTest: false,
         transparent: true,
@@ -523,6 +607,7 @@
       const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
       scenePlanet.add(clouds);
 
+      // STARFIELD
       const starMaterialUniforms = {
         pointTexture: {
           value: textureLoader.load("images/wc.png"),
@@ -530,7 +615,6 @@
         time: { value: 0.0 },
       };
 
-      // STARFIELD
       function createStarfield() {
         const starCount = 20000;
         const geometry = new THREE.BufferGeometry();
@@ -547,7 +631,6 @@
 
           sizes.push(5.0 + Math.random() * 10.0);
           
-          // Randomly choose color: white, yellow, or blue
           const colorChoice = Math.random();
           if (colorChoice < 0.33) {
             // White
@@ -590,10 +673,6 @@
       }
       createStarfield();
 
-      const clock = new THREE.Clock();
-      const speed = 0.03;
-      let dt = 0;
-
       // CITIES
       let points = [
         {
@@ -605,8 +684,6 @@
         },
         {
           title: "Chicago, US",
-          //flag: <i class="flag flag-united-states"></i>,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 41.8781,
             lng: -87.6298,
@@ -614,8 +691,6 @@
         },
         {
           title: "New Delhi, IN",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 28.6139,
             lng: 77.209,
@@ -623,8 +698,6 @@
         },
         {
           title: "Kyiv, UA",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 50.4501,
             lng: 30.5234,
@@ -632,8 +705,6 @@
         },
         {
           title: "Paris, EU",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 48.8566,
             lng: 2.3522,
@@ -641,8 +712,6 @@
         },
         {
           title: "Seoul, KR",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 37.5665,
             lng: 126.978,
@@ -650,8 +719,6 @@
         },
         {
           title: "Egypt, AF",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 26.8206,
             lng: 30.8025,
@@ -659,8 +726,6 @@
         },
         {
           title: "Brazil, SA",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: -14.235,
             lng: -51.9253,
@@ -668,17 +733,13 @@
         },
         {
           title: "Mexico City, MX",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 19.4326,
             lng: -99.1332,
           },
         },
         {
-          title: "Alice Springs, AU",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
+          title: "Alice Springs, AU",   
           coords: {
             lat: -23.698,
             lng: 133.8807,
@@ -686,8 +747,6 @@
         },
         {
           title: "Gansu, CN",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 36.0594,
             lng: 103.8263,
@@ -695,8 +754,6 @@
         },
         {
           title: "South Pole, AQ",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 90.0,
             lng: 45.0,
@@ -704,8 +761,6 @@
         },
         {
           title: "Chile, SA",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: -35.6751,
             lng: -71.543,
@@ -713,8 +768,6 @@
         },
         {
           title: "Sabah, MA",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 5.9788,
             lng: 116.0753,
@@ -722,8 +775,6 @@
         },
         {
           title: "Cancun, MX",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 21.1619,
             lng: -86.8515,
@@ -731,8 +782,6 @@
         },
         {
           title: "Zambia, AF",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: -13.1339,
             lng: 27.8493,
@@ -740,64 +789,12 @@
         },
         {
           title: "Ash-Shahaniyah, QA",
-          //flag: ,
-          //country: flag.selectByAlpha3("cub"),
           coords: {
             lat: 25.4106,
             lng: 51.1846,
           },
         },
       ];
-
-
-      const searchInput = document.getElementById("city-search");
-      const dropdownContainer = document.getElementById("dropdown-container");
-      document.addEventListener("DOMContentLoaded", function () {
-
-        function clearDropdown() {
-          dropdownContainer.innerHTML = ""; // Clear dropdown
-          dropdownContainer.style.display = "none"; // Hide dropdown
-        }
-
-        searchInput.addEventListener("input", function () {
-          const input = this.value.toLowerCase();
-          clearDropdown(); // Clear previous results
-
-          if (input.length > 0) {
-            const filteredPoints = points.filter((point) =>
-              point.title.toLowerCase().includes(input)
-            );
-            filteredPoints.forEach((point) => {
-              const item = document.createElement("div");
-              item.textContent = point.title;
-              item.className = "dropdown-item";
-              item.onclick = function () {
-                searchInput.value = point.title;
-                rotateToCity(point.coords.lat, point.coords.lng);
-                clearDropdown();
-              };
-              dropdownContainer.appendChild(item);
-              dropdownContainer.style.display = "block"; 
-            });
-
-            if (filteredPoints.length === 0) {
-              dropdownContainer.style.display = "none";
-            }
-          } else {
-            clearDropdown();
-          }
-        });
-
-        // Optionally, listen for clicks outside the dropdown to close it
-        document.addEventListener("click", function (event) {
-          if (
-            !searchInput.contains(event.target) &&
-            !dropdownContainer.contains(event.target)
-          ) {
-            clearDropdown();
-          }
-        });
-      });
 
       // CALCULATE POSITION FROM LATITUDE & LONGITUDE IN RADIANS
       function calcPosFromLatLonRad(lat, lon) {
@@ -814,11 +811,55 @@
         return { vector, quaternion };
       }
 
+      // CREATE MARKERS
+      var marker = new THREE.Group();
+
+      const coneMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById('coneVertexShader').textContent,
+          fragmentShader: document.getElementById('coneFragmentShader').textContent,
+          uniforms: {
+              time: { value: 0.0 }
+          },
+          transparent: true,
+      });
+
+      const sphereMaterialUniforms = {
+          time: { value: 0.0 }
+      };
+
+      const sphereShaderMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById('sphereVertexShader').textContent,
+          fragmentShader: document.getElementById('sphereFragmentShader').textContent,
+          uniforms: sphereMaterialUniforms,
+          transparent: true,
+      });
+
+      function createMarker(lat, lon) {
+        var sphereGeometry = new THREE.SphereBufferGeometry(0.01, 32, 32);
+        var sphere = new THREE.Mesh(sphereGeometry, sphereShaderMaterial);
+
+        var coneGeometry = new THREE.ConeBufferGeometry(0.008, 0.2, 32);
+        var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+        cone.position.y = -0.13;
+
+        marker.add(sphere);
+        marker.add(cone);
+
+        var position = calcPosFromLatLonRad(lat, lon).vector;
+
+        marker.position.x = position.x;
+        marker.position.y = position.y;
+        marker.position.z = position.z;
+
+        marker.lookAt(new THREE.Vector3(0, 0, 0));
+
+        return marker;
+      }
+
       // ROTATE TO SELECTED CITY
       function rotateToCity(lat, lon) {        
         const {vector, quaternion} = calcPosFromLatLonRad(lat, lon);
 
-        // Apply the quaternion to rotate the globe smoothly
         gsap.to(group.quaternion, {
           x: quaternion.x,
           y: quaternion.y,
@@ -931,15 +972,21 @@
       controls.enableRotate = false;
       controls.rotateSpeed = 1.0;
 
+      const clock = new THREE.Clock();
+      const speed = 0.03;
+      let dt = 0;
+
       // ANIMATE
       function animate() {
         // dControls.update();
         // fpControls.update(1.0);
         // flyControls.update(0.01);
 
-        clouds.rotation.y -= 0.0008;
-        clouds.rotation.z += 0.0008;
-        clouds.rotation.x += 0.0008;
+        const time = Date.now() * 0.001;
+
+        clouds.rotation.y -= 0.001;
+        clouds.rotation.z += 0.0015;
+        clouds.rotation.x -= 0.005;
 
 
         atmosphere.rotation.x += 0.005;
@@ -954,14 +1001,16 @@
           camera.position.z = 30;
         }
 
-        const time = Date.now() * 0.001;
-
         line.rotation.y = 0.7 * time;
 
         uniforms.amplitude.value = 0.3 * Math.sin(0.2 * time);
         uniforms.color.value.offsetHSL(0.05, 2, 0);
 
         starMaterialUniforms.time.value += 0.01;
+
+        coneMaterial.uniforms.time.value += 0.02;
+
+        sphereMaterialUniforms.time.value += 0.02;
 
         if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
           const delta = clock.getDelta(); 
