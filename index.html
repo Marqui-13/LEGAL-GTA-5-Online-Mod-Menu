@@ -89,7 +89,7 @@
     <!-- <div id="my-parent-element"></div>  -->
 
     <!--  PLACES LISTS -->
-    <div id="list"></div>
+    <!-- <div id="list"></div> -->
     <!--     <div id="listR"></div>      
  -->
 
@@ -105,9 +105,9 @@
       </ul>
       </footer> -->
 
-    <!-- JS SECTION STARTS -->
+    <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION STARTS -->
 
-    <!-- TEXT FONT SHADER START -->
+    <!-- TEXT FONT SHADERS START -->
     <script type="x-shader/x-vertex" id="vertexshaderText">
 
       uniform float amplitude;
@@ -141,9 +141,9 @@
 
       }
     </script>
-    <!-- TEXT FONT SHADER START -->
+    <!-- TEXT FONT SHADERS START -->
 
-    <!--  EARTH SAHDER START -->
+    <!--  EARTH SAHDERS START -->
     <script type="x-shader/x-vertex" id="earthVertexShader">
       varying vec2 vertexUV;
       varying vec3 vertexNormal;
@@ -164,13 +164,12 @@
 
       void main() {
         float intensity = 0.7 - dot(vertexNormal, vec3(0.0,0.0,1.0));
-        vec3 atmosphere = vec3(0.3, 0.6, 1.0) * pow(intensity, 3.0);
         gl_FragColor = vec4(texture2D(globeTexture, vertexUV).xyz, 1.0);
       }
     </script>
-    <!-- EARTH SHADER END -->
+    <!-- EARTH SHADERS END -->
 
-    <!-- CLOUD SHADER START -->
+    <!-- CLOUD SHADERS START -->
     <script type="x-shader/x-vertex" id="cloudVertexShader">
       uniform float time;
       varying vec2 vUv;
@@ -185,17 +184,17 @@
 
     <script type="x-shader/x-fragment" id="cloudFragmentShader">
       uniform sampler2D cloudTexture;
-    varying vec2 vUv;
-    varying float vFade;
+      varying vec2 vUv;
+      varying float vFade;
 
-    void main() {
-        vec4 texel = texture2D(cloudTexture, vUv);
-        gl_FragColor = vec4(texel.rgb, texel.a * vFade); // Apply fade effect based on latitude
-    }
+      void main() {
+          vec4 texel = texture2D(cloudTexture, vUv);
+          gl_FragColor = vec4(texel.rgb, texel.a * vFade); // Apply fade effect based on latitude
+      }
     </script>
-    <!-- CLOUD SHADER END -->
+    <!-- CLOUD SHADERS END -->
 
-    <!-- ATMOSPHERE SHADER START -->
+    <!-- ATMOSPHERE SHADERS START -->
 
     <script type="x-shader/x-vertex" id="atmVertexShader">
       varying vec3 vertexNormal;
@@ -215,11 +214,11 @@
       }
     </script>
 
-    <!-- ATMOSPHERE SHADER END -->
+    <!-- ATMOSPHERE SHADERS END -->
 
-    <!-- 360 SHADER START -->
+    <!-- 360 SHADERS START -->
 
-    <script type="x-shader/x-vertex" id="360VertexShader">
+    <!-- <script type="x-shader/x-vertex" id="360VertexShader">
       //varying vec3 vertexNormal;
       varying vec2 vertexUV;
 
@@ -237,9 +236,9 @@
       void main() {
         gl_FragColor = vec4(vertexUV, 0.0, 1.0);
       }
-    </script>
+    </script> -->
 
-    <!-- 360 SHADER END -->
+    <!-- 360 SHADERS END -->
 
     <!-- STAR SHADERS START -->
 
@@ -281,6 +280,10 @@
 
     <!-- STAR SHADERS END -->
 
+    <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION ENDS -->
+
+
+    <!-- JS SECTION STARTS -->
     <script type="module">
       import * as THREE from "./modules/three.module.js";
       //import {DragControls} from "./modules/DragControls.js";
@@ -335,6 +338,7 @@
         height: window.innerHeight,
       };
 
+      // RESIZING
       window.addEventListener("resize", () => {
         // Update sizes
         sizes.width = window.innerWidth;
@@ -349,14 +353,14 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       });
 
-      // Statistics
+      // STATISTICS
       let stats = new Stats();
       stats.domElement.style.position = "absolute";
       stats.domElement.style.bottom = "0px";
       stats.domElement.style.zIndex = 100;
       document.body.appendChild(stats.domElement);
       
-      // Loading Manager
+      // LOADING MANAGER
       const manager = new THREE.LoadingManager();
       manager.onStart = function (url, itemsLoaded, itemsTotal) {
         console.log(
@@ -404,14 +408,129 @@
       const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
       const earth = new THREE.Mesh(ebg, earthShaderMaterial);
       group.add(earth);
+      scenePlanet.add(group);
+
+      // EXPLORE 3D TEXT
+      let line, uniforms;
+      let fontLoader = new FontLoader();
+      fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
+        init(font);
+        animate();
+      });
+
+      function init(font) {
+        uniforms = {
+          amplitude: { value: 6.0 },
+          opacity: { value: 0.2 },
+          color: { value: new THREE.Color(0xffffff) },
+        };
+
+        let geometrySetting = {
+          font: font,
+          size: 10,
+          height: 5,
+          curveSegments: 10,
+          bevelEnabled: true,
+          bevelThickness: 5,
+          bevelSize: 1.5,
+          bevelSegments: 10,
+        };
+
+        const shaderMaterial = new THREE.ShaderMaterial({
+          uniforms: uniforms,
+          vertexShader: document.getElementById("vertexshaderText").textContent,
+          fragmentShader:
+            document.getElementById("fragmentshaderText").textContent,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          transparent: true,
+        });
+
+        const textGeo = new TextGeometry("EXPLORE", geometrySetting);
+        textGeo.center();
+
+        const count = textGeo.attributes.position.count;
+
+        const displacement = new THREE.Float32BufferAttribute(count * 7, 3);
+        textGeo.setAttribute("displacement", displacement);
+
+        const customColor = new THREE.Float32BufferAttribute(count * 7, 3);
+        textGeo.setAttribute("customColor", customColor);
+
+        const color = new THREE.Color(0xffffff);
+
+        for (let i = 0, l = customColor.count; i < l; i++) {
+          color.setHSL(i / l, 0.5, 0.5);
+          color.toArray(customColor.array, i * customColor.itemSize);
+        }
+
+        line = new THREE.Line(textGeo, shaderMaterial);
+        line.position.y = 15;
+        line.rotation.x = 0.2;
+        scenePlanet.add(line);
+      }
+
+      // ATMOSPHERE
+      // const cameraPosition = new THREE.Vector3();
+      // const earthPosition = new THREE.Vector3(0, 0, 0); // Adjust if your Earth is not centered at the origin
+
+      // // Update this every frame or when necessary
+      // camera.getWorldPosition(cameraPosition);
+      // const viewDirection = new THREE.Vector3().subVectors(earthPosition, cameraPosition).normalize();
+
+      // function updateShaderUniforms() {
+      //   const cameraPosition = new THREE.Vector3();
+      //   camera.getWorldPosition(cameraPosition);
+      //   atmosphereShaderMaterial.uniforms.cameraPos.value = cameraPosition;
+      // }
+
+      const atmosphereShaderMaterial = new THREE.ShaderMaterial({
+        // uniforms: {
+        //   cameraPos: { value: new THREE.Vector3() },
+        // },
+        vertexShader: document.getElementById("atmVertexShader").textContent,
+        fragmentShader:
+          document.getElementById("atmFragmentShader").textContent,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+      });
+
+      // atmosphereShaderMaterial.uniforms.viewDirection = { value: viewDirection };
+
+      const abg = new THREE.SphereBufferGeometry(1.5, 32, 32);
+      const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
+      //atmosphere.scale.set(1.1,1.1,1.1);
+      scenePlanet.add(atmosphere);
+
+      // CLOUDS
+      const cloudShaderMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          cloudTexture: {
+            value: textureLoader.load("./images/fair_clouds_4k.png"),
+            time: { value: 0 }
+          },
+        },
+        vertexShader: document.getElementById("cloudVertexShader").textContent,
+        fragmentShader: document.getElementById("cloudFragmentShader")
+          .textContent,
+
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+        vertexColors: true,
+      });
+      const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32);
+      const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
+      scenePlanet.add(clouds);
 
       const starMaterialUniforms = {
         pointTexture: {
-          value: new THREE.TextureLoader().load("images/wc.png"),
+          value: textureLoader.load("images/wc.png"),
         },
         time: { value: 0.0 },
       };
 
+      // STARFIELD
       function createStarfield() {
         const starCount = 20000;
         const geometry = new THREE.BufferGeometry();
@@ -462,6 +581,7 @@
       const speed = 0.03;
       let dt = 0;
 
+      // CITIES
       let points = [
         {
           title: "Current Location",
@@ -616,9 +736,10 @@
         },
       ];
 
+
+      const searchInput = document.getElementById("city-search");
+      const dropdownContainer = document.getElementById("dropdown-container");
       document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById("city-search");
-        const dropdownContainer = document.getElementById("dropdown-container");
 
         function clearDropdown() {
           dropdownContainer.innerHTML = ""; // Clear dropdown
@@ -665,13 +786,7 @@
         });
       });
 
-      // Optional: Hide search results when clicking elsewhere
-      // document.body.addEventListener("click", function (e) {
-      //   if (e.target !== searchInput) {
-      //     searchResults.style.display = "none";
-      //   }
-      // });
-
+      // CALCULATE POSITION FROM LATITUDE & LONGITUDE IN RADIANS
       function calcPosFromLatLonRad(lat, lon) {
         var phi = (lat * Math.PI) / 180;
         var theta = ((lon + 180) * Math.PI) / 180;
@@ -686,8 +801,9 @@
         return { vector, quaternion };
       }
 
-      function rotateToCity(lat, lon) {
-        const {quaternion} = calcPosFromLatLonRad(lat, lon);
+      // ROTATE TO SELECTED CITY
+      function rotateToCity(lat, lon) {        
+        const {vector, quaternion} = calcPosFromLatLonRad(lat, lon);
 
         // Apply the quaternion to rotate the globe smoothly
         gsap.to(group.quaternion, {
@@ -695,108 +811,13 @@
           y: quaternion.y,
           z: quaternion.z,
           w: quaternion.w,
-          duration: 2,
+          duration: 3,
           ease: "power3.inOut",
           onUpdate: function () {
             controls.update();
           },
         });
       }
-
-      let line, uniforms;
-      let fontLoader = new FontLoader();
-      fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
-        init(font);
-        animate();
-      });
-
-      function init(font) {
-        uniforms = {
-          amplitude: { value: 6.0 },
-          opacity: { value: 0.2 },
-          color: { value: new THREE.Color(0xffffff) },
-        };
-
-        let geometrySetting = {
-          font: font,
-          size: 10,
-          height: 5,
-          curveSegments: 10,
-          bevelEnabled: true,
-          bevelThickness: 5,
-          bevelSize: 1.5,
-          bevelSegments: 10,
-        };
-
-        const shaderMaterial = new THREE.ShaderMaterial({
-          uniforms: uniforms,
-          vertexShader: document.getElementById("vertexshaderText").textContent,
-          fragmentShader:
-            document.getElementById("fragmentshaderText").textContent,
-          blending: THREE.AdditiveBlending,
-          depthTest: false,
-          transparent: true,
-        });
-
-        const textGeo = new TextGeometry("EXPLORE", geometrySetting);
-        textGeo.center();
-
-        const count = textGeo.attributes.position.count;
-
-        const displacement = new THREE.Float32BufferAttribute(count * 7, 3);
-        textGeo.setAttribute("displacement", displacement);
-
-        const customColor = new THREE.Float32BufferAttribute(count * 7, 3);
-        textGeo.setAttribute("customColor", customColor);
-
-        const color = new THREE.Color(0xffffff);
-
-        for (let i = 0, l = customColor.count; i < l; i++) {
-          color.setHSL(i / l, 0.5, 0.5);
-          color.toArray(customColor.array, i * customColor.itemSize);
-        }
-
-        line = new THREE.Line(textGeo, shaderMaterial);
-        line.position.y = 15;
-        line.rotation.x = 0.2;
-        scenePlanet.add(line);
-      }
-
-      scenePlanet.add(group);
-
-      // ATMOSPHERE
-      const atmosphereShaderMaterial = new THREE.ShaderMaterial({
-        vertexShader: document.getElementById("atmVertexShader").textContent,
-        fragmentShader:
-          document.getElementById("atmFragmentShader").textContent,
-        blending: THREE.AdditiveBlending,
-        side: THREE.BackSide,
-      });
-      const abg = new THREE.SphereBufferGeometry(1.85, 32, 32);
-      const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
-      //atmosphere.scale.set(1.1,1.1,1.1);
-      scenePlanet.add(atmosphere);
-
-      // Clouds
-      const cloudShaderMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          cloudTexture: {
-            value: textureLoader.load("./images/fair_clouds_4k.png"),
-            time: { value: 0 }
-          },
-        },
-        vertexShader: document.getElementById("cloudVertexShader").textContent,
-        fragmentShader: document.getElementById("cloudFragmentShader")
-          .textContent,
-
-        blending: THREE.AdditiveBlending,
-        depthTest: false,
-        transparent: true,
-        vertexColors: true,
-      });
-      const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32);
-      const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
-      scenePlanet.add(clouds);
 
       // function getCurve(p1,p2) {
       //   let v1 = new THREE.Vector3(p1.x, p1.y, p1.z);
@@ -877,10 +898,9 @@
 
       // flyControls.dragToLook = true;
 
-      // Orbit Controls
+      // ORBIT CONTROLS
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enabled = true;
-
       //controls.target = scenePlanet.position;
 
       controls.minDistance = 5;
@@ -898,7 +918,7 @@
       controls.enableRotate = false;
       controls.rotateSpeed = 1.0;
 
-      // Animate
+      // ANIMATE
       function animate() {
         // dControls.update();
         // fpControls.update(1.0);
@@ -915,6 +935,7 @@
 
         dt = clock.getDelta();
         camera.position.z -= speed * dt;
+
         // reset if camera position below 0
         if (camera.position.z <= 1) {
           camera.position.z = 30;
@@ -930,7 +951,7 @@
         starMaterialUniforms.time.value += 0.01;
 
         if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
-          const delta = clock.getDelta(); // Make sure `clock` is accessible
+          const delta = clock.getDelta(); 
           cloudShaderMaterial.uniforms.time.value += delta * 0.2;
         }
 
@@ -945,6 +966,8 @@
 
         attributes.displacement.needsUpdate = true;
 
+        // updateShaderUniforms();
+
         controls.update();
         requestAnimationFrame(animate);
         renderer.render(scenePlanet, camera);
@@ -953,10 +976,13 @@
     </script>
     <!-- JS SECTION ENDS -->
 
+    <!-- CDNJS THREE JS LIBRARY LINK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
 
     <!-- GLTF LOADER LINK FOR SATELITES/MOON FLOATING IN ORBIT 
-  <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
+
+    <!-- CDNJS GSAP LIBRARY LINK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   </body>
 </html>
