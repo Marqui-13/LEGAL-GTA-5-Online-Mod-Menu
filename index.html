@@ -26,7 +26,10 @@
   <body>
     <div id="loader-wrapper">
       <div id="loader">
-        <!-- <div id="progress-bar"></div> -->
+        <p>Loading...</p>
+        <div id="progress-bar-container">
+          <div id="progress-bar"></div>
+        </div>
         <div id="loading-percentage">0%</div>
       </div>
     </div>
@@ -382,8 +385,8 @@
 
       manager.onProgress = function (url, itemsLoaded, itemsTotal) {
         const progress = (itemsLoaded / itemsTotal) * 100;
-        document.getElementById("loading-percentage").innerText =
-          Math.round(progress) + "%";
+        document.getElementById("loading-percentage").innerText = Math.round(progress) + "%";
+        document.getElementById("progress-bar").style.width = progress + "%";
       };
 
       const textureLoader = new THREE.TextureLoader(manager);
