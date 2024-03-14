@@ -316,7 +316,7 @@
 
       void main() {
           vColor = customColor;
-          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 10.0 + time) * 1.5, cos(position.y * 10.0 + time) * 1.5, 0.0), 1.0);
+          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 3.0 + time) * 1.5, cos(position.y * 3.0 + time) * 1.5, 0.0), 1.0);
           gl_PointSize = size * (300.0 / -mvPosition.z);
           gl_Position = projectionMatrix * mvPosition;
       }
