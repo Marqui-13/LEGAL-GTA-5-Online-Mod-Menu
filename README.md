@@ -15,7 +15,7 @@ Explore the marvels of our planet with our cutting-edge 3D Earth web application
 ## Features
 
 - Precision Globe Navigation: Navigate the earth's surface with precision using integrated longitude and latitude data with quaternions for rotation.
-- Sophisticated Shader Use: Shaders create realistic earth, clouds, atmosphere, and a captivating star field, enhancing the visual experience.
+- Sophisticated Shader Use: Shaders create realistic earth, clouds, atmosphere, location markers, and a captivating star field, enhancing the visual experience.
 - Detailed Textures: Textures mapped onto shaders add depth and detail, bringing the planet to life.
 - Three.js Text Font: Enhances the user interface, making interaction both intuitive and engaging.
 - GSAP Animations: Ensures smooth transitions and animations for a fluid, responsive user experience.
