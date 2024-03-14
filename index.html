@@ -384,12 +384,12 @@
         camera.position.z = 1000; // Adjust this value based on how zoomed out you want to start
 
         // Target position (zoomed in)
-        const targetPositionZ = 20; // Adjust this to the desired final zoom level
+        const targetPositionZ = 10; // Adjust this to the desired final zoom level
 
         // GSAP animation
         gsap.to(camera.position, {
             z: targetPositionZ, // Final camera position
-            duration: 5, // Duration of the animation in seconds
+            duration: 3, // Duration of the animation in seconds
             ease: "expo.inOut",
             onStart: function() {
                 // Optional: Actions to take when the animation starts
