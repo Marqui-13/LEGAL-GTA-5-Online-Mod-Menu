@@ -320,7 +320,7 @@
           gl_PointSize = size * (300.0 / -mvPosition.z);
           gl_Position = projectionMatrix * mvPosition;
       }
-    </script>
+    </script>     
 
     <script type="x-shader/x-fragment" id="starFragmentShader">
       uniform sampler2D pointTexture;
@@ -984,9 +984,9 @@
 
         const time = Date.now() * 0.001;
 
-        clouds.rotation.y -= 0.001;
+        clouds.rotation.y -= 0.0006;
         clouds.rotation.z += 0.0015;
-        clouds.rotation.x -= 0.005;
+        clouds.rotation.x -= 0.0006;
 
 
         atmosphere.rotation.x += 0.005;
