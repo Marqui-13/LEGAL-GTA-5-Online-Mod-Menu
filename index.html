@@ -79,7 +79,7 @@
       <h3 style="text-align: center; align-items: center; color: white">
         Use two fingers/mouse scroll to zoom in/out. Use two fingers/right mouse
         button to pan. <br />
-        Type and select a location in the search bar to rotate toward it.<br />
+        Select a location on the left to rotate toward it.<br />
         <a href="https://op.on.fleek.co">Other Projects</a>
       </h3>
     </nav>
@@ -98,7 +98,7 @@
 
     <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION STARTS -->
     <!-- TEXT FONT SHADERS START -->
-    <script type="x-shader/x-vertex" id="vertexshaderText">
+    <script type="x-shader/x-vertex" id="textVertexShader">
 
       uniform float amplitude;
 
@@ -118,7 +118,7 @@
       }
     </script>
 
-    <script type="x-shader/x-fragment" id="fragmentshaderText">
+    <script type="x-shader/x-fragment" id="textFragmentShader">
 
       uniform vec3 color;
       uniform float opacity;
@@ -544,9 +544,9 @@
 
         const shaderMaterial = new THREE.ShaderMaterial({
           uniforms: uniforms,
-          vertexShader: document.getElementById("vertexshaderText").textContent,
+          vertexShader: document.getElementById("textVertexShader").textContent,
           fragmentShader:
-            document.getElementById("fragmentshaderText").textContent,
+            document.getElementById("textFragmentShader").textContent,
           blending: THREE.AdditiveBlending,
           depthTest: false,
           transparent: true,
@@ -687,13 +687,6 @@
           coords: {
             lat: 41.8781,
             lng: -87.6298,
-          },
-        },
-        {
-          title: "Daisen, JP",
-          coords: {
-            lat: 39.45304,
-            lng: 140.47545
           },
         },
         {
