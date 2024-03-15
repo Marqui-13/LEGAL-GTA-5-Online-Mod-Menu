@@ -390,14 +390,14 @@
         gsap.to(camera.position, {
             z: targetPositionZ, // Final camera position
             duration: 4, // Duration of the animation in seconds
-            ease: "expo.inOut",
+            ease: "power4.inOut",
             onStart: function() {
                 // Optional: Actions to take when the animation starts
             },
             onComplete: function() {
                 // Optional: Actions to take when the animation completes
                 // Now the user can interact with the scene
-                camera.position.z = targetPositionZ;
+
             }
         });
       }
