@@ -1,7 +1,6 @@
 <!-- TO-DO -->
 <!-- Rotate satellites and moon around earth -->
 
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -31,7 +30,11 @@
     </div>
 
     <div class="search-container">
-      <input type="text" id="city-search" placeholder="🔍 Search for cities..." />
+      <input
+        type="text"
+        id="city-search"
+        placeholder="🔍 Search for cities..."
+      />
       <div id="dropdown-container" class="dropdown-container"></div>
     </div>
     <!-- <div id="stats"></div> -->
@@ -271,7 +274,7 @@
     <script type="x-shader/x-vertex" id="sphereVertexShader">
       varying vec3 vPosition;
       varying vec3 vNormal;
-    
+
       void main() {
           vPosition = position;
           vNormal = normalize(normalMatrix * normal);
@@ -283,20 +286,20 @@
       uniform float time; // Passed in from JavaScript to control animation
       varying vec3 vPosition; // Position passed from vertex shader
       varying vec3 vNormal; // Normal passed from vertex shader
-    
+
       void main() {
           // Calculate a pulsing value between 0.0 and 1.0
           float pulse = (sin(time * 3.0) + 1.0) / 2.0;
-    
+
           // Calculate intensity based on the angle between the normal and view direction
           float angleIntensity = dot(normalize(vNormal), vec3(0.0, 0.0, 1.0));
-    
+
           // Base color for the sphere, golden color
           vec3 baseColor = vec3(1.0, 0.84, 0.0); // Golden color
-    
+
           // Combine base color with the pulsing effect
           vec4 color = vec4(baseColor * pulse, pulse * angleIntensity);
-    
+
           // Output the final color
           gl_FragColor = color;
       }
@@ -320,7 +323,7 @@
           gl_PointSize = size * (300.0 / -mvPosition.z);
           gl_Position = projectionMatrix * mvPosition;
       }
-    </script>     
+    </script>
 
     <script type="x-shader/x-fragment" id="starFragmentShader">
       uniform sampler2D pointTexture;
@@ -381,27 +384,25 @@
 
       function startZoomEffect() {
         // Initial camera position (zoomed out)
-        camera.position.z = 1000; // Adjust this value based on how zoomed out you want to start
+        camera.position.z = 5000; // Adjust this value based on how zoomed out you want to start
 
         // Target position (zoomed in)
         const targetPositionZ = 10; // Adjust this to the desired final zoom level
 
         // GSAP animation
         gsap.to(camera.position, {
-            z: targetPositionZ, // Final camera position
-            duration: 4, // Duration of the animation in seconds
-            ease: "power4.inOut",
-            onStart: function() {
-                // Optional: Actions to take when the animation starts
-            },
-            onComplete: function() {
-                // Optional: Actions to take when the animation completes
-                // Now the user can interact with the scene
-
-            }
+          z: targetPositionZ, // Final camera position
+          duration: 6, // Duration of the animation in seconds
+          ease: "power4.inOut",
+          onStart: function () {
+            // Optional: Actions to take when the animation starts
+          },
+          onComplete: function () {
+            // Optional: Actions to take when the animation completes
+            // Now the user can interact with the scene
+          },
         });
       }
-
 
       // LIGHT
       const ambientLight = new THREE.AmbientLight(0xffffff);
@@ -438,7 +439,6 @@
       const searchInput = document.getElementById("city-search");
       const dropdownContainer = document.getElementById("dropdown-container");
       document.addEventListener("DOMContentLoaded", function () {
-
         function clearDropdown() {
           dropdownContainer.innerHTML = "";
           dropdownContainer.style.display = "none";
@@ -461,7 +461,7 @@
                 rotateToCity(point.coords.lat, point.coords.lng);
 
                 if (marker) {
-                    group.remove(marker);
+                  group.remove(marker);
                 }
                 marker = createMarker(point.coords.lat, point.coords.lng);
                 group.add(marker);
@@ -469,7 +469,7 @@
                 clearDropdown();
               };
               dropdownContainer.appendChild(item);
-              dropdownContainer.style.display = "block"; 
+              dropdownContainer.style.display = "block";
             });
 
             if (filteredPoints.length === 0) {
@@ -489,7 +489,7 @@
           }
         });
       });
-      
+
       // LOADING MANAGER
       const manager = new THREE.LoadingManager();
       manager.onStart = function (url, itemsLoaded, itemsTotal) {
@@ -513,7 +513,8 @@
 
       manager.onProgress = function (url, itemsLoaded, itemsTotal) {
         const progress = (itemsLoaded / itemsTotal) * 100;
-        document.getElementById("loading-percentage").innerText = Math.round(progress) + "%";
+        document.getElementById("loading-percentage").innerText =
+          Math.round(progress) + "%";
         document.getElementById("progress-bar").style.width = progress + "%";
       };
 
@@ -618,11 +619,12 @@
         uniforms: {
           cloudTexture: {
             value: textureLoader.load("./images/fair_clouds_4k.png"),
-            time: { value: 0 }
+            time: { value: 0 },
           },
         },
         vertexShader: document.getElementById("cloudVertexShader").textContent,
-        fragmentShader: document.getElementById("cloudFragmentShader").textContent,
+        fragmentShader: document.getElementById("cloudFragmentShader")
+          .textContent,
         blending: THREE.AdditiveBlending,
         depthTest: false,
         transparent: true,
@@ -641,7 +643,7 @@
       };
 
       function createStarfield() {
-        const starCount = 60000;
+        const starCount = 80000;
         const geometry = new THREE.BufferGeometry();
         const positions = [];
         const sizes = [];
@@ -649,13 +651,13 @@
 
         for (let i = 0; i < starCount; i++) {
           positions.push(
-            THREE.Math.randFloatSpread(2000),
-            THREE.Math.randFloatSpread(2000),
-            THREE.Math.randFloatSpread(2000)
+            THREE.Math.randFloatSpread(5000),
+            THREE.Math.randFloatSpread(5000),
+            THREE.Math.randFloatSpread(5000)
           );
 
           sizes.push(5.0 + Math.random() * 10.0);
-          
+
           const colorChoice = Math.random();
           if (colorChoice < 0.33) {
             // White
@@ -722,13 +724,6 @@
           },
         },
         {
-          title: "Daisen, JP",
-          coords: {
-            lat: 39.45304,
-            lng: 140.47545
-          },
-        },
-        {
           title: "Kyiv, UA",
           coords: {
             lat: 50.4501,
@@ -771,7 +766,7 @@
           },
         },
         {
-          title: "Alice Springs, AU",   
+          title: "Alice Springs, AU",
           coords: {
             lat: -23.698,
             lng: 133.8807,
@@ -847,23 +842,25 @@
       var marker = new THREE.Group();
 
       const coneMaterial = new THREE.ShaderMaterial({
-          vertexShader: document.getElementById('coneVertexShader').textContent,
-          fragmentShader: document.getElementById('coneFragmentShader').textContent,
-          uniforms: {
-              time: { value: 0.0 }
-          },
-          transparent: true,
+        vertexShader: document.getElementById("coneVertexShader").textContent,
+        fragmentShader:
+          document.getElementById("coneFragmentShader").textContent,
+        uniforms: {
+          time: { value: 0.0 },
+        },
+        transparent: true,
       });
 
       const sphereMaterialUniforms = {
-          time: { value: 0.0 }
+        time: { value: 0.0 },
       };
 
       const sphereShaderMaterial = new THREE.ShaderMaterial({
-          vertexShader: document.getElementById('sphereVertexShader').textContent,
-          fragmentShader: document.getElementById('sphereFragmentShader').textContent,
-          uniforms: sphereMaterialUniforms,
-          transparent: true,
+        vertexShader: document.getElementById("sphereVertexShader").textContent,
+        fragmentShader: document.getElementById("sphereFragmentShader")
+          .textContent,
+        uniforms: sphereMaterialUniforms,
+        transparent: true,
       });
 
       function createMarker(lat, lon) {
@@ -889,8 +886,8 @@
       }
 
       // ROTATE TO SELECTED CITY
-      function rotateToCity(lat, lon) {        
-        const {vector, quaternion} = calcPosFromLatLonRad(lat, lon);
+      function rotateToCity(lat, lon) {
+        const { vector, quaternion } = calcPosFromLatLonRad(lat, lon);
 
         gsap.to(group.quaternion, {
           x: quaternion.x,
@@ -990,7 +987,7 @@
       //controls.target = scenePlanet.position;
 
       controls.minDistance = 5;
-      controls.maxDistance = 1000;
+      controls.maxDistance = 5000;
 
       controls.enableDamping = false;
       controls.dampingFactor = 0.01;
@@ -1020,7 +1017,6 @@
         clouds.rotation.z += 0.0015;
         clouds.rotation.x -= 0.0006;
 
-
         atmosphere.rotation.x += 0.005;
         atmosphere.rotation.y -= 0.01;
         atmosphere.rotation.z += 0.005;
@@ -1045,7 +1041,7 @@
         sphereMaterialUniforms.time.value += 0.02;
 
         if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
-          const delta = clock.getDelta(); 
+          const delta = clock.getDelta();
           cloudShaderMaterial.uniforms.time.value += delta * 0.2;
         }
 
@@ -1080,6 +1076,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
 
     <!-- CDNJS GSAP CUSTOM EASE LINK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js" integrity="sha512-4a56NRIrhn/ePBdSSNfwsmL+eZt/uCXEb7s+3B8tg/tDiywDMKb5u2QCdhsYQtEkUMPGE5GUVbZYqgKeRzJ7yQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"
+      integrity="sha512-4a56NRIrhn/ePBdSSNfwsmL+eZt/uCXEb7s+3B8tg/tDiywDMKb5u2QCdhsYQtEkUMPGE5GUVbZYqgKeRzJ7yQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </body>
 </html>
