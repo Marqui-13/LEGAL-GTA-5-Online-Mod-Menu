@@ -993,7 +993,7 @@
       controls.enabled = true;
       //controls.target = scenePlanet.position;
 
-      controls.minDistance = 5;
+      controls.minDistance = 7.5;
       controls.maxDistance = 5000;
 
       controls.enableDamping = false;
@@ -1027,14 +1027,6 @@
         atmosphere.rotation.x += 0.005;
         atmosphere.rotation.y -= 0.01;
         atmosphere.rotation.z += 0.005;
-
-        dt = clock.getDelta();
-        camera.position.z -= speed * dt;
-
-        // reset if camera position below 0
-        if (camera.position.z <= 1) {
-          camera.position.z = 5;
-        }
 
         line.rotation.y = 0.7 * time;
 
