@@ -807,7 +807,7 @@
         const colors = [];
 
         // Randomize initial position around the Earth
-        const radius = 100; // Example radius around the Earth where shooting stars can start
+        const radius = 20; // Example radius around the Earth where shooting stars can start
         const theta = Math.random() * 2 * Math.PI;
         const phi = Math.acos(2 * Math.random() - 1);
         positions[0] = radius * Math.sin(phi) * Math.cos(theta); // X
@@ -815,7 +815,7 @@
         positions[2] = radius * Math.cos(phi); // Z
 
         // Random velocity direction
-        const speed = 30; // Example speed, adjust as necessary
+        const speed = 20; // Example speed, adjust as necessary
           const velocity = new THREE.Vector3(
               (Math.random() - 0.5) * speed,
               (Math.random() - 0.5) * speed,
@@ -861,7 +861,7 @@
         }
 
         // Create multiple shooting stars
-        for (let i = 0; i < 50; i++) { // Create 5 shooting stars
+        for (let i = 0; i < 100; i++) { // Create 5 shooting stars
             shootingStars.push(createShootingStar());
         }
 
@@ -890,7 +890,7 @@
                   positions[2] = radius * Math.cos(phi);
 
                   // Optionally, reset velocity for varied trajectories
-                  const speed = 5; // Adjust speed as necessary
+                  const speed = 10; // Adjust speed as necessary
                   shootingStar.velocity.set(
                       (Math.random() - 0.5) * speed,
                       (Math.random() - 0.5) * speed,
