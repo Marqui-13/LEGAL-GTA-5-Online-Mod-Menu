@@ -6,6 +6,10 @@
   padding: 0;
 }
 
+.main-content {
+  display: none; /* Ensures content is hidden until loading is complete */
+}
+
 #loader-wrapper {
   position: fixed;
   top: 0;
@@ -50,7 +54,6 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  display: none;
 }
 
 #city-search {
@@ -381,6 +384,11 @@ main {
 
 body{
   overflow: hidden;
+}
+
+#main-content {
+  opacity: 0;
+  transition: opacity 2s ease-out;
 }
 
 canvas {
