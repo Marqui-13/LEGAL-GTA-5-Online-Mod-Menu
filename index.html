@@ -815,7 +815,7 @@
         positions[2] = radius * Math.cos(phi); // Z
 
         // Random velocity direction
-        const speed = 20; // Example speed, adjust as necessary
+        const speed = 2; // Example speed, adjust as necessary
           const velocity = new THREE.Vector3(
               (Math.random() - 0.5) * speed,
               (Math.random() - 0.5) * speed,
@@ -861,7 +861,7 @@
         }
 
         // Create multiple shooting stars
-        for (let i = 0; i < 100; i++) { // Create 5 shooting stars
+        for (let i = 0; i < 200; i++) { // Create 5 shooting stars
             shootingStars.push(createShootingStar());
         }
 
@@ -877,12 +877,12 @@
 
               // Calculate the distance from the center
               const distance = Math.sqrt(positions[0] ** 2 + positions[1] ** 2 + positions[2] ** 2);
-              const resetDistance = 300; // Example reset boundary, adjust as needed
+              const resetDistance = 50; // Example reset boundary, adjust as needed
 
               // Check if the shooting star is beyond the reset distance
               if (distance > resetDistance) {
                   // Reset position to a new random location around the scene
-                  const radius = 10; // Example start radius, adjust as needed
+                  const radius = 5; // Example start radius, adjust as needed
                   const theta = Math.random() * 2 * Math.PI;
                   const phi = Math.acos(2 * Math.random() - 1);
                   positions[0] = radius * Math.sin(phi) * Math.cos(theta);
@@ -890,7 +890,7 @@
                   positions[2] = radius * Math.cos(phi);
 
                   // Optionally, reset velocity for varied trajectories
-                  const speed = 10; // Adjust speed as necessary
+                  const speed = 2; // Adjust speed as necessary
                   shootingStar.velocity.set(
                       (Math.random() - 0.5) * speed,
                       (Math.random() - 0.5) * speed,
