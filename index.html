@@ -44,6 +44,16 @@
         />
         <div id="dropdown-container" class="dropdown-container"></div>
       </div>
+
+      <nav>
+        <h3 style="text-align: center; align-items: center; color: white">
+          Use two fingers/mouse scroll to zoom in/out. Use two fingers/right mouse
+          button to pan. <br />
+          Type and select a location in the search bar to rotate toward it.<br />
+          <a href="https://op.on.fleek.co">Other Projects</a>
+        </h3>
+      </nav>
+    </div>
       <!-- <div id="stats"></div> -->
 
       <!--Navigation Menu -->
@@ -85,15 +95,7 @@
             </div>
           </label>
       </nav> -->
-      <nav>
-        <h3 style="text-align: center; align-items: center; color: white">
-          Use two fingers/mouse scroll to zoom in/out. Use two fingers/right mouse
-          button to pan. <br />
-          Type and select a location in the search bar to rotate toward it.<br />
-          <a href="https://op.on.fleek.co">Other Projects</a>
-        </h3>
-      </nav>
-    </div>
+  
       <!--FOOTER-->
       <!--       <footer>
         <ul class="footer-links">
@@ -445,7 +447,6 @@
             onStart: function () {
               // Optional: Actions to take when the animation starts
               line.visible = true;
-
             },
             onComplete: function () {
               // Optional: Actions to take when the animation completes
@@ -570,6 +571,7 @@
           }
           stats.domElement.style.display = 'block';
           startZoomEffect();
+          starField.visible = true;
         };
 
         manager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -606,7 +608,7 @@
         scenePlanet.add(group);
 
         // EXPLORE 3D TEXT
-        let line, uniforms;
+        let line, uniforms, starField;
         let fontLoader = new FontLoader(manager);
         manager.itemStart('font');
 
@@ -767,8 +769,9 @@
             vertexColors: true,
           });
 
-          const starField = new THREE.Points(geometry, material);
+          starField = new THREE.Points(geometry, material);
           scenePlanet.add(starField);
+          starField.visible = false;
         }
         createStarfield();
 
