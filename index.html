@@ -387,12 +387,12 @@
         camera.position.z = 5000; // Adjust this value based on how zoomed out you want to start
 
         // Target position (zoomed in)
-        const targetPositionZ = 7.5; // Adjust this to the desired final zoom level
+        const targetPositionZ = 10; // Adjust this to the desired final zoom level
 
         // GSAP animation
         gsap.to(camera.position, {
           z: targetPositionZ, // Final camera position
-          duration: 4.5, // Duration of the animation in seconds
+          duration: 6, // Duration of the animation in seconds
           ease: "power4.inOut",
           onStart: function () {
             // Optional: Actions to take when the animation starts
@@ -643,7 +643,7 @@
       };
 
       function createStarfield() {
-        const starCount = 100000;
+        const starCount = 80000;
         const geometry = new THREE.BufferGeometry();
         const positions = [];
         const sizes = [];
@@ -742,13 +742,6 @@
           coords: {
             lat: 37.5665,
             lng: 126.978,
-          },
-        },
-        {
-          title: "Daisen, JP",
-          coords: {
-            lat: 39.45304,
-            lng: 140.47545,
           },
         },
         {
@@ -993,7 +986,7 @@
       controls.enabled = true;
       //controls.target = scenePlanet.position;
 
-      controls.minDistance = 7.5;
+      controls.minDistance = 5;
       controls.maxDistance = 5000;
 
       controls.enableDamping = false;
@@ -1027,6 +1020,14 @@
         atmosphere.rotation.x += 0.005;
         atmosphere.rotation.y -= 0.01;
         atmosphere.rotation.z += 0.005;
+
+        dt = clock.getDelta();
+        camera.position.z -= speed * dt;
+
+        // reset if camera position below 0
+        if (camera.position.z <= 1) {
+          camera.position.z = 30;
+        }
 
         line.rotation.y = 0.7 * time;
 
