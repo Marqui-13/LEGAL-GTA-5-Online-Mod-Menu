@@ -846,7 +846,7 @@
             // Check if the shooting star is beyond the reset distance
             if (distance > resetDistance) {
                 // Reset position to a new random location around the scene
-                const radius = 10; // Example start radius, adjust as needed
+                const radius = 5; // Example start radius, adjust as needed
                 const theta = Math.random() * 2 * Math.PI;
                 const phi = Math.acos(2 * Math.random() - 1);
                 positions[0] = radius * Math.sin(phi) * Math.cos(theta);
