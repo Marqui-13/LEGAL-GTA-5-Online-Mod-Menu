@@ -29,1250 +29,1277 @@
       </div>
     </div>
 
-    <div class="search-container">
-      <input
-        type="text"
-        id="city-search"
-        placeholder="🔍 Search for cities..."
-      />
-      <div id="dropdown-container" class="dropdown-container"></div>
-    </div>
-    <!-- <div id="stats"></div> -->
+    <div class="main-content">
+      <div class="search-container">
+        <input
+          type="text"
+          id="city-search"
+          placeholder="🔍 Search for cities..."
+        />
+        <div id="dropdown-container" class="dropdown-container"></div>
+      </div>
+      <!-- <div id="stats"></div> -->
 
-    <!--Navigation Menu -->
-    <!--     <nav>
-        <input style="display: none;" type="checkbox" id="nav-toggle">
+      <!--Navigation Menu -->
+      <!--     <nav>
+          <input style="display: none;" type="checkbox" id="nav-toggle">
 
-        <div class="logo">
-          <span class="letters">3</span>
-          <span class="letters">D</span>
-          <span class="letters" style="cursor: auto">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="letters">E</span>
-          <span class="letters">A</span>
-          <span class="letters">R</span>
-          <span class="letters">T</span>
-          <span class="letters">H</span>
-        </div>
-
-        <ul class="links">
-          <li class="link"><a href="index.html" class="btn">🏠 Home</a></li>
-          <li class="link"><a href="3Dearth.html" class="btn">🌎 3D Earth</a></li>
-          <li class="link"><a href="3Dcharacter.html" class="btn">🤖 3D Character</a></li>
-          <li class="link"><a href="3DsolarSystem.html" class="btn">🌌 Solar System</a></li>
-        </ul>
-
-        <label for="nav-toggle" class="hamburger-menu">
-          <div class="hamburger hamburger3">
-
-            <div class="linea">
-              <div id="li" class="line"></div>
-            </div>
-
-            <div class="linea">
-              <div id="li" class="line"></div>
-            </div>
-
-            <div class="linea">
-              <div id="li" class="line"></div>
-              </div>
+          <div class="logo">
+            <span class="letters">3</span>
+            <span class="letters">D</span>
+            <span class="letters" style="cursor: auto">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="letters">E</span>
+            <span class="letters">A</span>
+            <span class="letters">R</span>
+            <span class="letters">T</span>
+            <span class="letters">H</span>
           </div>
-        </label>
-    </nav> -->
-    <nav>
-      <h3 style="text-align: center; align-items: center; color: white">
-        Use two fingers/mouse scroll to zoom in/out. Use two fingers/right mouse
-        button to pan. <br />
-        Type and select a location in the search bar to rotate toward it.<br />
-        <a href="https://op.on.fleek.co">Other Projects</a>
-      </h3>
+
+          <ul class="links">
+            <li class="link"><a href="index.html" class="btn">🏠 Home</a></li>
+            <li class="link"><a href="3Dearth.html" class="btn">🌎 3D Earth</a></li>
+            <li class="link"><a href="3Dcharacter.html" class="btn">🤖 3D Character</a></li>
+            <li class="link"><a href="3DsolarSystem.html" class="btn">🌌 Solar System</a></li>
+          </ul>
+
+          <label for="nav-toggle" class="hamburger-menu">
+            <div class="hamburger hamburger3">
+
+              <div class="linea">
+                <div id="li" class="line"></div>
+              </div>
+
+              <div class="linea">
+                <div id="li" class="line"></div>
+              </div>
+
+              <div class="linea">
+                <div id="li" class="line"></div>
+                </div>
+            </div>
+          </label>
+      </nav> -->
+      <nav>
+        <h3 style="text-align: center; align-items: center; color: white">
+          Use two fingers/mouse scroll to zoom in/out. Use two fingers/right mouse
+          button to pan. <br />
+          Type and select a location in the search bar to rotate toward it.<br />
+          <a href="https://op.on.fleek.co">Other Projects</a>
+        </h3>
+      </nav>
     </nav>
+      <!--FOOTER-->
+      <!--       <footer>
+        <ul class="footer-links">
+          <li class="fl">          
+            <span style="--i:1;"><a href="https://github.com/Marqui-13" target="_blank"><img  src="./glogo.png" width="70" height="70"></a></span>
+          </li>
+          <li class="fl">
+            <span style="--i:2;"><a href="https://codepen.io/marqui-13" target="_blank"><img  src="./codepen1.png" width="70" height="70"></a></span>
+          </li>
+        </ul>
+        </footer> -->
 
-    <!--FOOTER-->
-    <!--       <footer>
-      <ul class="footer-links">
-        <li class="fl">          
-          <span style="--i:1;"><a href="https://github.com/Marqui-13" target="_blank"><img  src="./glogo.png" width="70" height="70"></a></span>
-        </li>
-        <li class="fl">
-          <span style="--i:2;"><a href="https://codepen.io/marqui-13" target="_blank"><img  src="./codepen1.png" width="70" height="70"></a></span>
-        </li>
-      </ul>
-      </footer> -->
+      <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION STARTS -->
+      <!-- TEXT FONT SHADERS START -->
+      <script type="x-shader/x-vertex" id="textVertexShader">
 
-    <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION STARTS -->
-    <!-- TEXT FONT SHADERS START -->
-    <script type="x-shader/x-vertex" id="textVertexShader">
+        uniform float amplitude;
 
-      uniform float amplitude;
+        attribute vec3 displacement;
+        attribute vec3 customColor;
 
-      attribute vec3 displacement;
-      attribute vec3 customColor;
+        varying vec3 vColor;
 
-      varying vec3 vColor;
+        void main() {
 
-      void main() {
+          vec3 newPosition = position + amplitude * displacement;
 
-        vec3 newPosition = position + amplitude * displacement;
-
-        vColor = customColor;
-
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="textFragmentShader">
-
-      uniform vec3 color;
-      uniform float opacity;
-
-      varying vec3 vColor;
-
-      void main() {
-
-        gl_FragColor = vec4( vColor * color, opacity );
-
-      }
-    </script>
-    <!-- TEXT FONT SHADERS START -->
-
-    <!--  EARTH SAHDERS START -->
-    <script type="x-shader/x-vertex" id="earthVertexShader">
-      varying vec2 vertexUV;
-      varying vec3 vertexNormal;
-
-      void main() {
-        vertexUV = uv;
-        vertexNormal = normalize(normalMatrix * normal);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="earthFragmentShader">
-      varying vec2 vertexUV;
-      varying vec3 vertexNormal;
-      uniform sampler2D globeTexture;
-
-
-
-      void main() {
-        float intensity = 0.7 - dot(vertexNormal, vec3(0.0,0.0,1.0));
-        gl_FragColor = vec4(texture2D(globeTexture, vertexUV).xyz, 1.0);
-      }
-    </script>
-    <!-- EARTH SHADERS END -->
-
-    <!-- CLOUD SHADERS START -->
-    <script type="x-shader/x-vertex" id="cloudVertexShader">
-      uniform float time;
-      varying vec2 vUv;
-      varying float vFade;
-      const float PI = 3.141592653589793;
-
-      void main() {
-          vUv = uv + vec2(time * 0.05, 0.0); // Adjust for cloud movement
-          vFade = 0.5 * (sin(uv.y * PI)); // Fade factor based on latitude, sin ensures a smooth gradient
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="cloudFragmentShader">
-      uniform sampler2D cloudTexture;
-      varying vec2 vUv;
-      varying float vFade;
-
-      void main() {
-          vec4 texel = texture2D(cloudTexture, vUv);
-          float fadeSmooth = smoothstep(0.0, 1.0, vFade); // Smoother transition
-          gl_FragColor = vec4(texel.rgb, texel.a * fadeSmooth); // Apply smooth fade
-      }
-    </script>
-    <!-- CLOUD SHADERS END -->
-
-    <!-- ATMOSPHERE SHADERS START -->
-    <script type="x-shader/x-vertex" id="atmVertexShader">
-      varying vec3 vertexNormal;
-
-      void main() {
-        vertexNormal = normalize(normalMatrix * normal);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="atmFragmentShader">
-      varying vec3 vertexNormal;
-
-      void main() {
-        float intensity = pow(0.003 - dot(vertexNormal, vec3(0.0,0.0,0.8)),3.1);
-        gl_FragColor = vec4(0.3, 0.6, 1.0, 6.0) * intensity;
-      }
-    </script>
-    <!-- ATMOSPHERE SHADERS END -->
-
-    <!-- 360 SHADERS START -->
-
-    <!-- <script type="x-shader/x-vertex" id="360VertexShader">
-      //varying vec3 vertexNormal;
-      varying vec2 vertexUV;
-
-      void main() {
-        vertexUV = uv;
-        //vertexNormal = normalize(normalMatrix * normal);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="360FragmentShader">
-      //varying vec3 vertexNormal;
-      varying vec2 vertexUV;
-
-      void main() {
-        gl_FragColor = vec4(vertexUV, 0.0, 1.0);
-      }
-    </script> -->
-
-    <!-- 360 SHADERS END -->
-
-    <!-- MARKER SHADERS START -->
-    <!-- CONE MARKER SHADERS START -->
-    <script type="x-shader/x-vertex" id="coneVertexShader">
-      attribute float size;
-      varying vec3 vPosition;
-      varying vec3 vNormal;
-
-      void main() {
-          vPosition = position;
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="coneFragmentShader">
-      uniform float time;
-      varying vec3 vPosition;
-      varying vec3 vNormal;
-
-      void main() {
-          // Normalized pulsation based on time
-          float pulse = (sin(time * 3.0) + 1.0) / 2.0;
-
-          // Intensity based on the angle between the normal and view direction for a faux-glow effect
-          float angleIntensity = pow(abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
-
-          // Combine pulse and angle intensity for the final color
-          vec3 color = mix(vec3(1.0, 0.5, 0.0), vec3(1.0, 1.0, 0.5), pulse) * angleIntensity;
-
-          // Output the color with a dynamic alpha value for the pulsating glow effect
-          gl_FragColor = vec4(color, angleIntensity * pulse);
-      }
-    </script>
-    <!-- CONE MARKER SHADERS END -->
-
-    <!-- SPHERE MARKER SHADERS START -->
-    <script type="x-shader/x-vertex" id="sphereVertexShader">
-      varying vec3 vPosition;
-      varying vec3 vNormal;
-
-      void main() {
-          vPosition = position;
-          vNormal = normalize(normalMatrix * normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    </script>
-
-    <script type="x-shader/x-fragment" id="sphereFragmentShader">
-      uniform float time; // Passed in from JavaScript to control animation
-      varying vec3 vPosition; // Position passed from vertex shader
-      varying vec3 vNormal; // Normal passed from vertex shader
-
-      void main() {
-          // Calculate a pulsing value between 0.0 and 1.0
-          float pulse = (sin(time * 3.0) + 1.0) / 2.0;
-
-          // Calculate intensity based on the angle between the normal and view direction
-          float angleIntensity = dot(normalize(vNormal), vec3(0.0, 0.0, 1.0));
-
-          // Base color for the sphere, golden color
-          vec3 baseColor = vec3(1.0, 0.84, 0.0); // Golden color
-
-          // Combine base color with the pulsing effect
-          vec4 color = vec4(baseColor * pulse, pulse * angleIntensity);
-
-          // Output the final color
-          gl_FragColor = color;
-      }
-    </script>
-    <!-- SPHERE MARKER SHADERS END -->
-    <!-- MARKER SHADERS END -->
-
-    <!-- STAR SHADERS START -->
-
-    <script type="x-shader/x-vertex" id="starVertexShader">
-      attribute float size;
-      attribute vec3 customColor;
-      varying vec3 vColor;
-
-      uniform float time;
-
-      void main() {
           vColor = customColor;
-          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 2.0 + time) * 1.5, cos(position.y * 2.0 + time) * 1.5, 0.0), 1.0);
-          gl_PointSize = size * (300.0 / -mvPosition.z);
-          gl_Position = projectionMatrix * mvPosition;
-      }
-    </script>
 
-    <script type="x-shader/x-fragment" id="starFragmentShader">
-      uniform sampler2D pointTexture;
-      varying vec3 vColor;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
 
-      void main() {
-        float distance = 2.0 * distance(gl_PointCoord, vec2(0.5, 0.5));
-        float alpha = 1.0 - distance;
-        alpha = alpha * alpha; // Enhance glow
-
-        // Directly use vColor for coloring the star
-        gl_FragColor = vec4(vColor * alpha, alpha);
-
-        if (distance > 1.0) {
-          discard; // Ensures circular shape
         }
-      }
-    </script>
-    <!-- STAR SHADERS END -->
+      </script>
 
-    <!-- SHOOTING STAR SHADERS START -->
-    <script type="x-shader/x-vertex" id="shootingStarVertexShader">
+      <script type="x-shader/x-fragment" id="textFragmentShader">
+
+        uniform vec3 color;
+        uniform float opacity;
+
+        varying vec3 vColor;
+
+        void main() {
+
+          gl_FragColor = vec4( vColor * color, opacity );
+
+        }
+      </script>
+      <!-- TEXT FONT SHADERS START -->
+
+      <!--  EARTH SAHDERS START -->
+      <script type="x-shader/x-vertex" id="earthVertexShader">
+        varying vec2 vertexUV;
+        varying vec3 vertexNormal;
+
+        void main() {
+          vertexUV = uv;
+          vertexNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="earthFragmentShader">
+        varying vec2 vertexUV;
+        varying vec3 vertexNormal;
+        uniform sampler2D globeTexture;
+
+
+
+        void main() {
+          float intensity = 0.7 - dot(vertexNormal, vec3(0.0,0.0,1.0));
+          gl_FragColor = vec4(texture2D(globeTexture, vertexUV).xyz, 1.0);
+        }
+      </script>
+      <!-- EARTH SHADERS END -->
+
+      <!-- CLOUD SHADERS START -->
+      <script type="x-shader/x-vertex" id="cloudVertexShader">
+        uniform float time;
+        varying vec2 vUv;
+        varying float vFade;
+        const float PI = 3.141592653589793;
+
+        void main() {
+            vUv = uv + vec2(time * 0.05, 0.0); // Adjust for cloud movement
+            vFade = 0.5 * (sin(uv.y * PI)); // Fade factor based on latitude, sin ensures a smooth gradient
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="cloudFragmentShader">
+        uniform sampler2D cloudTexture;
+        varying vec2 vUv;
+        varying float vFade;
+
+        void main() {
+            vec4 texel = texture2D(cloudTexture, vUv);
+            float fadeSmooth = smoothstep(0.0, 1.0, vFade); // Smoother transition
+            gl_FragColor = vec4(texel.rgb, texel.a * fadeSmooth); // Apply smooth fade
+        }
+      </script>
+      <!-- CLOUD SHADERS END -->
+
+      <!-- ATMOSPHERE SHADERS START -->
+      <script type="x-shader/x-vertex" id="atmVertexShader">
+        varying vec3 vertexNormal;
+
+        void main() {
+          vertexNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="atmFragmentShader">
+        varying vec3 vertexNormal;
+
+        void main() {
+          float intensity = pow(0.003 - dot(vertexNormal, vec3(0.0,0.0,0.8)),3.1);
+          gl_FragColor = vec4(0.3, 0.6, 1.0, 6.0) * intensity;
+        }
+      </script>
+      <!-- ATMOSPHERE SHADERS END -->
+
+      <!-- 360 SHADERS START -->
+
+      <!-- <script type="x-shader/x-vertex" id="360VertexShader">
+        //varying vec3 vertexNormal;
+        varying vec2 vertexUV;
+
+        void main() {
+          vertexUV = uv;
+          //vertexNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 0.9 );
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="360FragmentShader">
+        //varying vec3 vertexNormal;
+        varying vec2 vertexUV;
+
+        void main() {
+          gl_FragColor = vec4(vertexUV, 0.0, 1.0);
+        }
+      </script> -->
+
+      <!-- 360 SHADERS END -->
+
+      <!-- MARKER SHADERS START -->
+      <!-- CONE MARKER SHADERS START -->
+      <script type="x-shader/x-vertex" id="coneVertexShader">
+        attribute float size;
+        varying vec3 vPosition;
+        varying vec3 vNormal;
+
+        void main() {
+            vPosition = position;
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="coneFragmentShader">
+        uniform float time;
+        varying vec3 vPosition;
+        varying vec3 vNormal;
+
+        void main() {
+            // Normalized pulsation based on time
+            float pulse = (sin(time * 3.0) + 1.0) / 2.0;
+
+            // Intensity based on the angle between the normal and view direction for a faux-glow effect
+            float angleIntensity = pow(abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
+
+            // Combine pulse and angle intensity for the final color
+            vec3 color = mix(vec3(1.0, 0.5, 0.0), vec3(1.0, 1.0, 0.5), pulse) * angleIntensity;
+
+            // Output the color with a dynamic alpha value for the pulsating glow effect
+            gl_FragColor = vec4(color, angleIntensity * pulse);
+        }
+      </script>
+      <!-- CONE MARKER SHADERS END -->
+
+      <!-- SPHERE MARKER SHADERS START -->
+      <script type="x-shader/x-vertex" id="sphereVertexShader">
+        varying vec3 vPosition;
+        varying vec3 vNormal;
+
+        void main() {
+            vPosition = position;
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      </script>
+
+      <script type="x-shader/x-fragment" id="sphereFragmentShader">
+        uniform float time; // Passed in from JavaScript to control animation
+        varying vec3 vPosition; // Position passed from vertex shader
+        varying vec3 vNormal; // Normal passed from vertex shader
+
+        void main() {
+            // Calculate a pulsing value between 0.0 and 1.0
+            float pulse = (sin(time * 3.0) + 1.0) / 2.0;
+
+            // Calculate intensity based on the angle between the normal and view direction
+            float angleIntensity = dot(normalize(vNormal), vec3(0.0, 0.0, 1.0));
+
+            // Base color for the sphere, golden color
+            vec3 baseColor = vec3(1.0, 0.84, 0.0); // Golden color
+
+            // Combine base color with the pulsing effect
+            vec4 color = vec4(baseColor * pulse, pulse * angleIntensity);
+
+            // Output the final color
+            gl_FragColor = color;
+        }
+      </script>
+      <!-- SPHERE MARKER SHADERS END -->
+      <!-- MARKER SHADERS END -->
+
+      <!-- STAR SHADERS START -->
+
+      <script type="x-shader/x-vertex" id="starVertexShader">
         attribute float size;
         attribute vec3 customColor;
         varying vec3 vColor;
-        varying float vStreakOpacity;
-        
+
         uniform float time;
-        
+
         void main() {
             vColor = customColor;
-        
-            // Position the shooting star
-            vec3 modPosition = position;
-            modPosition.x -= time * 100.0; // Horizontal movement
-            modPosition.y += sin(time + position.x) * 20.0; // Wavy vertical movement
-        
-            // Calculate streak opacity based on x-position to create the streak effect
-            float streakLength = 150.0; // Adjust the length of the streak
-            float distanceFromLeadingEdge = mod(modPosition.x - time * 100.0, streakLength);
-            vStreakOpacity = 2.0 - distanceFromLeadingEdge / streakLength;
-        
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(modPosition, 1.0);
-            gl_PointSize = size * (300.0 / -gl_Position.z);
+            vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 2.0 + time) * 1.5, cos(position.y * 2.0 + time) * 1.5, 0.0), 1.0);
+            gl_PointSize = size * (300.0 / -mvPosition.z);
+            gl_Position = projectionMatrix * mvPosition;
         }
-    </script>  
-      
-    <script type="x-shader/x-fragment" id="shootingStarFragmentShader">
-      uniform sampler2D pointTexture;
-      uniform vec3 starColor;
-      uniform float glowIntensity;
+      </script>
 
-      varying vec3 vColor;
-      varying float vStreakOpacity;
+      <script type="x-shader/x-fragment" id="starFragmentShader">
+        uniform sampler2D pointTexture;
+        varying vec3 vColor;
 
-      void main() {
-          vec4 texel = texture2D(pointTexture, gl_PointCoord);
-          vec3 glowColor = starColor * glowIntensity;
+        void main() {
+          float distance = 2.0 * distance(gl_PointCoord, vec2(0.5, 0.5));
+          float alpha = 1.0 - distance;
+          alpha = alpha * alpha; // Enhance glow
+
+          // Directly use vColor for coloring the star
+          gl_FragColor = vec4(vColor * alpha, alpha);
+
+          if (distance > 1.0) {
+            discard; // Ensures circular shape
+          }
+        }
+      </script>
+      <!-- STAR SHADERS END -->
+
+      <!-- SHOOTING STAR SHADERS START -->
+      <script type="x-shader/x-vertex" id="shootingStarVertexShader">
+          attribute float size;
+          attribute vec3 customColor;
+          varying vec3 vColor;
+          varying float vStreakOpacity;
           
-          // Apply the glow based on texture alpha and streak opacity
-          gl_FragColor = vec4(glowColor * texel.rgb * vStreakOpacity, texel.a * vStreakOpacity);
-      }
-    </script>      
-    <!-- SHOOTING STAR SHADERS END -->
-    <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION ENDS -->
+          uniform float time;
+          
+          void main() {
+              vColor = customColor;
+          
+              // Position the shooting star
+              vec3 modPosition = position;
+              modPosition.x -= time * 100.0; // Horizontal movement
+              modPosition.y += sin(time + position.x) * 20.0; // Wavy vertical movement
+          
+              // Calculate streak opacity based on x-position to create the streak effect
+              float streakLength = 150.0; // Adjust the length of the streak
+              float distanceFromLeadingEdge = mod(modPosition.x - time * 100.0, streakLength);
+              vStreakOpacity = 2.0 - distanceFromLeadingEdge / streakLength;
+          
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(modPosition, 1.0);
+              gl_PointSize = size * (300.0 / -gl_Position.z);
+          }
+      </script>  
+        
+      <script type="x-shader/x-fragment" id="shootingStarFragmentShader">
+        uniform sampler2D pointTexture;
+        uniform vec3 starColor;
+        uniform float glowIntensity;
 
-    <!-- JS SECTION STARTS -->
-    <script type="module">
-      import * as THREE from "./modules/three.module.js";
-      //import {DragControls} from "./modules/DragControls.js";
-      // import { FirstPersonControls } from "./modules/FirstPersonControls.js";
-      // import {FlyControls} from "./modules/FlyControls.js";
-      import Stats from "./js/Stats.js";
-      import { OrbitControls } from "./js/OrbitControls.js";
-      import { FontLoader } from "./js/FontLoader.js";
-      import { TextGeometry } from "./js/TextGeometry.js";
+        varying vec3 vColor;
+        varying float vStreakOpacity;
 
-      // RENDERER
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.device);
-      document.body.appendChild(renderer.domElement);
+        void main() {
+            vec4 texel = texture2D(pointTexture, gl_PointCoord);
+            vec3 glowColor = starColor * glowIntensity;
+            
+            // Apply the glow based on texture alpha and streak opacity
+            gl_FragColor = vec4(glowColor * texel.rgb * vStreakOpacity, texel.a * vStreakOpacity);
+        }
+      </script>      
+      <!-- SHOOTING STAR SHADERS END -->
+      <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION ENDS -->
 
-      // SCENE
-      const scene360 = new THREE.Scene();
-      const scenePlanet = new THREE.Scene();
-      const sceneFinal = new THREE.Scene();
+      <!-- JS SECTION STARTS -->
+      <script type="module">
+        import * as THREE from "./modules/three.module.js";
+        //import {DragControls} from "./modules/DragControls.js";
+        // import { FirstPersonControls } from "./modules/FirstPersonControls.js";
+        // import {FlyControls} from "./modules/FlyControls.js";
+        import Stats from "./js/Stats.js";
+        import { OrbitControls } from "./js/OrbitControls.js";
+        import { FontLoader } from "./js/FontLoader.js";
+        import { TextGeometry } from "./js/TextGeometry.js";
 
-      // CAMERA
-      const camera = new THREE.PerspectiveCamera(
-        30,
-        window.innerWidth / window.innerHeight,
-        1,
-        10000
-      );
+        // RENDERER
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.device);
+        document.body.appendChild(renderer.domElement);
 
-      camera.position.set(0, 0, 500);
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
-      camera.up.set(0, 1, 0);
-      //camera.position.z = 30;
-      camera.rotation.x = Math.PI / 2;
+        // SCENE
+        const scene360 = new THREE.Scene();
+        const scenePlanet = new THREE.Scene();
+        const sceneFinal = new THREE.Scene();
 
-      function startZoomEffect() {
-        // Initial camera position (zoomed out)
-        camera.position.z = 5000; // Adjust this value based on how zoomed out you want to start
+        // CAMERA
+        const camera = new THREE.PerspectiveCamera(
+          30,
+          window.innerWidth / window.innerHeight,
+          1,
+          10000
+        );
 
-        // Target position (zoomed in)
-        const targetPositionZ = 7.5; // Adjust this to the desired final zoom level
+        camera.position.set(0, 0, 500);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        camera.up.set(0, 1, 0);
+        //camera.position.z = 30;
+        camera.rotation.x = Math.PI / 2;
 
-        // GSAP animation
-        gsap.to(camera.position, {
-          z: targetPositionZ, // Final camera position
-          duration: 4.5, // Duration of the animation in seconds
-          ease: "power4.inOut",
-          onStart: function () {
-            // Optional: Actions to take when the animation starts
-          },
-          onComplete: function () {
-            // Optional: Actions to take when the animation completes
-            // Now the user can interact with the scene
-          },
-        });
-      }
+        function startZoomEffect() {
+          // Initial camera position (zoomed out)
+          camera.position.z = 5000; // Adjust this value based on how zoomed out you want to start
 
-      // LIGHT
-      const ambientLight = new THREE.AmbientLight(0xffffff);
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-      dirLight.position.set(5, 3, 5);
-      scene360.add(ambientLight, dirLight);
-      scenePlanet.add(ambientLight, dirLight);
+          // Target position (zoomed in)
+          const targetPositionZ = 7.5; // Adjust this to the desired final zoom level
 
-      // SIZES
-      const sizes = {
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
+          // GSAP animation
+          gsap.to(camera.position, {
+            z: targetPositionZ, // Final camera position
+            duration: 4.5, // Duration of the animation in seconds
+            ease: "power4.inOut",
+            onStart: function () {
+              // Optional: Actions to take when the animation starts
+              line.visible = true;
 
-      // RESIZING
-      window.addEventListener("resize", () => {
-        sizes.width = window.innerWidth;
-        sizes.height = window.innerHeight;
-
-        camera.aspect = sizes.width / sizes.height;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(sizes.width, sizes.height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      });
-
-      // STATISTICS
-      let stats = new Stats();
-      stats.domElement.style.position = "absolute";
-      stats.domElement.style.bottom = "0px";
-      stats.domElement.style.zIndex = 100;
-      document.body.appendChild(stats.domElement);
-
-      const searchInput = document.getElementById("city-search");
-      const dropdownContainer = document.getElementById("dropdown-container");
-      document.addEventListener("DOMContentLoaded", function () {
-        function clearDropdown() {
-          dropdownContainer.innerHTML = "";
-          dropdownContainer.style.display = "none";
+            },
+            onComplete: function () {
+              // Optional: Actions to take when the animation completes
+              // Now the user can interact with the scene
+              shootingStars.forEach(({ star, trail }) => {
+                  star.visible = true;
+                  trail.visible = true;
+              });
+            },
+          });
         }
 
-        searchInput.addEventListener("input", function () {
-          const input = this.value.toLowerCase();
-          clearDropdown();
+        // LIGHT
+        const ambientLight = new THREE.AmbientLight(0xffffff);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 3, 5);
+        scene360.add(ambientLight, dirLight);
+        scenePlanet.add(ambientLight, dirLight);
 
-          if (input.length > 0) {
-            const filteredPoints = points.filter((point) =>
-              point.title.toLowerCase().includes(input)
-            );
-            filteredPoints.forEach((point) => {
-              const item = document.createElement("div");
-              item.textContent = point.title;
-              item.className = "dropdown-item";
-              item.onclick = function () {
-                searchInput.value = point.title;
-                rotateToCity(point.coords.lat, point.coords.lng);
+        // SIZES
+        const sizes = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
 
-                if (marker) {
-                  group.remove(marker);
-                }
-                marker = createMarker(point.coords.lat, point.coords.lng);
-                group.add(marker);
+        // RESIZING
+        window.addEventListener("resize", () => {
+          sizes.width = window.innerWidth;
+          sizes.height = window.innerHeight;
 
-                clearDropdown();
-              };
-              dropdownContainer.appendChild(item);
-              dropdownContainer.style.display = "block";
-            });
+          camera.aspect = sizes.width / sizes.height;
+          camera.updateProjectionMatrix();
 
-            if (filteredPoints.length === 0) {
-              dropdownContainer.style.display = "none";
+          renderer.setSize(sizes.width, sizes.height);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
+
+        // STATISTICS
+        let stats = new Stats();
+        stats.domElement.style.position = "absolute";
+        stats.domElement.style.bottom = "0px";
+        stats.domElement.style.zIndex = 100;
+        stats.domElement.style.display = 'none';
+        document.body.appendChild(stats.domElement);
+
+        const searchInput = document.getElementById("city-search");
+        const dropdownContainer = document.getElementById("dropdown-container");
+        document.addEventListener("DOMContentLoaded", function () {
+          function clearDropdown() {
+            dropdownContainer.innerHTML = "";
+            dropdownContainer.style.display = "none";
+          }
+
+          searchInput.addEventListener("input", function () {
+            const input = this.value.toLowerCase();
+            clearDropdown();
+
+            if (input.length > 0) {
+              const filteredPoints = points.filter((point) =>
+                point.title.toLowerCase().includes(input)
+              );
+              filteredPoints.forEach((point) => {
+                const item = document.createElement("div");
+                item.textContent = point.title;
+                item.className = "dropdown-item";
+                item.onclick = function () {
+                  searchInput.value = point.title;
+                  rotateToCity(point.coords.lat, point.coords.lng);
+
+                  if (marker) {
+                    group.remove(marker);
+                  }
+                  marker = createMarker(point.coords.lat, point.coords.lng);
+                  group.add(marker);
+
+                  clearDropdown();
+                };
+                dropdownContainer.appendChild(item);
+                dropdownContainer.style.display = "block";
+              });
+
+              if (filteredPoints.length === 0) {
+                dropdownContainer.style.display = "none";
+              }
+            } else {
+              clearDropdown();
             }
+          });
+
+          document.addEventListener("click", function (event) {
+            if (
+              !searchInput.contains(event.target) &&
+              !dropdownContainer.contains(event.target)
+            ) {
+              clearDropdown();
+            }
+          });
+        });
+
+        // LOADING MANAGER
+        const manager = new THREE.LoadingManager();
+        manager.onStart = function (url, itemsLoaded, itemsTotal) {
+          console.log(
+            "Started loading: " +
+              url +
+              "\nLoaded " +
+              itemsLoaded +
+              " of " +
+              itemsTotal +
+              " files."
+          );
+        };
+
+        manager.onLoad = function () {
+          console.log("Loading complete!");
+          document.getElementById("loader-wrapper").style.display = "none";
+          const mainContent = document.querySelector(".main-content");
+          if(mainContent) {
+              mainContent.style.display = "block";
           } else {
-            clearDropdown();
+              console.error("Can't find the main content element.");
           }
-        });
+          stats.domElement.style.display = 'block';
+          startZoomEffect();
+        };
 
-        document.addEventListener("click", function (event) {
-          if (
-            !searchInput.contains(event.target) &&
-            !dropdownContainer.contains(event.target)
-          ) {
-            clearDropdown();
-          }
-        });
-      });
+        manager.onProgress = function (url, itemsLoaded, itemsTotal) {
+          const progress = (itemsLoaded / itemsTotal) * 100;
+          document.getElementById("loading-percentage").innerText =
+            Math.round(progress) + "%";
+          document.getElementById("progress-bar").style.width = progress + "%";
+        };
 
-      // LOADING MANAGER
-      const manager = new THREE.LoadingManager();
-      manager.onStart = function (url, itemsLoaded, itemsTotal) {
-        console.log(
-          "Started loading: " +
-            url +
-            "\nLoaded " +
-            itemsLoaded +
-            " of " +
-            itemsTotal +
-            " files."
-        );
-      };
+        const textureLoader = new THREE.TextureLoader(manager);
 
-      manager.onLoad = function () {
-        console.log("Loading complete!");
-        document.getElementById("loader-wrapper").style.display = "none";
-        document.querySelector(".search-container").style.display = "block";
-        startZoomEffect();
-      };
+        // GROUP
+        const group = new THREE.Group();
 
-      manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-        const progress = (itemsLoaded / itemsTotal) * 100;
-        document.getElementById("loading-percentage").innerText =
-          Math.round(progress) + "%";
-        document.getElementById("progress-bar").style.width = progress + "%";
-      };
-
-      const textureLoader = new THREE.TextureLoader(manager);
-
-      const group = new THREE.Group();
-
-      const earthShaderMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          globeTexture: {
-            value: textureLoader.load("./images/2_no_clouds_4k.jpg"),
+        // EARTH
+        const earthShaderMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            globeTexture: {
+              value: textureLoader.load("./images/2_no_clouds_4k.jpg"),
+            },
           },
-        },
-        vertexShader: document.getElementById("earthVertexShader").textContent,
-        fragmentShader: document.getElementById("earthFragmentShader")
-          .textContent,
+          vertexShader: document.getElementById("earthVertexShader").textContent,
+          fragmentShader: document.getElementById("earthFragmentShader")
+            .textContent,
 
-        blending: THREE.AdditiveBlending,
-        depthTest: false,
-        transparent: false,
-        vertexColors: true,
-      });
-      const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
-      const earth = new THREE.Mesh(ebg, earthShaderMaterial);
-      group.add(earth);
-      scenePlanet.add(group);
-
-      // EXPLORE 3D TEXT
-      let line, uniforms;
-      let fontLoader = new FontLoader();
-      fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
-        init(font);
-        animate();
-      });
-
-      function init(font) {
-        uniforms = {
-          amplitude: { value: 3.0 },
-          opacity: { value: 0.2 },
-          color: { value: new THREE.Color(0xffffff) },
-        };
-
-        let geometrySetting = {
-          font: font,
-          size: 10,
-          height: 5,
-          curveSegments: 10,
-          bevelEnabled: true,
-          bevelThickness: 5,
-          bevelSize: 1.5,
-          bevelSegments: 10,
-        };
-
-        const shaderMaterial = new THREE.ShaderMaterial({
-          uniforms: uniforms,
-          vertexShader: document.getElementById("textVertexShader").textContent,
-          fragmentShader:
-            document.getElementById("textFragmentShader").textContent,
           blending: THREE.AdditiveBlending,
           depthTest: false,
-          transparent: true,
+          transparent: false,
+          vertexColors: true,
+        });
+        const ebg = new THREE.SphereBufferGeometry(1.0, 32, 32);
+        const earth = new THREE.Mesh(ebg, earthShaderMaterial);
+        group.add(earth);
+        scenePlanet.add(group);
+
+        // EXPLORE 3D TEXT
+        let line, uniforms;
+        let fontLoader = new FontLoader(manager);
+        manager.itemStart('font');
+
+        fontLoader.load("./fonts/helvetiker_bold.typeface.json", function (font) {
+          init(font);
+          animate();
+
+          manager.itemEnd('font');
+        }, undefined, function (error) {
+          console.error('Font loading error:', error);
+          manager.itemEnd('font');
         });
 
-        const textGeo = new TextGeometry("EXPLORE", geometrySetting);
-        textGeo.center();
 
-        const count = textGeo.attributes.position.count;
+        function init(font) {
+          uniforms = {
+            amplitude: { value: 3.0 },
+            opacity: { value: 0.3 },
+            color: { value: new THREE.Color(0xffffff) },
+          };
 
-        const displacement = new THREE.Float32BufferAttribute(count * 7, 3);
-        textGeo.setAttribute("displacement", displacement);
+          let geometrySetting = {
+            font: font,
+            size: 10,
+            height: 5,
+            curveSegments: 10,
+            bevelEnabled: true,
+            bevelThickness: 5,
+            bevelSize: 1.5,
+            bevelSegments: 10,
+          };
 
-        const customColor = new THREE.Float32BufferAttribute(count * 7, 3);
-        textGeo.setAttribute("customColor", customColor);
+          const shaderMaterial = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: document.getElementById("textVertexShader").textContent,
+            fragmentShader:
+              document.getElementById("textFragmentShader").textContent,
+            blending: THREE.AdditiveBlending,
+            depthTest: false,
+            transparent: true,
+          });
 
-        const color = new THREE.Color(0xffffff);
+          const textGeo = new TextGeometry("EXPLORE", geometrySetting);
+          textGeo.center();
 
-        for (let i = 0, l = customColor.count; i < l; i++) {
-          color.setHSL(i / l, 0.5, 0.5);
-          color.toArray(customColor.array, i * customColor.itemSize);
-        }
+          const count = textGeo.attributes.position.count;
 
-        line = new THREE.Line(textGeo, shaderMaterial);
-        line.position.y = 15;
-        line.rotation.x = 0.2;
-        scenePlanet.add(line);
-      }
+          const displacement = new THREE.Float32BufferAttribute(count * 7, 3);
+          textGeo.setAttribute("displacement", displacement);
 
-      const atmosphereShaderMaterial = new THREE.ShaderMaterial({
-        vertexShader: document.getElementById("atmVertexShader").textContent,
-        fragmentShader:
-          document.getElementById("atmFragmentShader").textContent,
-        blending: THREE.AdditiveBlending,
-        side: THREE.BackSide,
-      });
+          const customColor = new THREE.Float32BufferAttribute(count * 7, 3);
+          textGeo.setAttribute("customColor", customColor);
 
-      const abg = new THREE.SphereBufferGeometry(1.75, 32, 32);
-      const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
-      scenePlanet.add(atmosphere);
+          const color = new THREE.Color(0xffffff);
 
-      // CLOUDS
-      const cloudShaderMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          cloudTexture: {
-            value: textureLoader.load("./images/fair_clouds_4k.png"),
-            time: { value: 0 },
-          },
-        },
-        vertexShader: document.getElementById("cloudVertexShader").textContent,
-        fragmentShader: document.getElementById("cloudFragmentShader")
-          .textContent,
-        blending: THREE.AdditiveBlending,
-        depthTest: false,
-        transparent: true,
-        vertexColors: true,
-      });
-      const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32);
-      const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
-      scenePlanet.add(clouds);
-
-      // STARFIELD
-      const starMaterialUniforms = {
-        pointTexture: {
-          value: textureLoader.load("images/wc.png"),
-        },
-        time: { value: 0.0 },
-      };
-
-      function createStarfield() {
-        const starCount = 100000;
-        const geometry = new THREE.BufferGeometry();
-        const positions = [];
-        const sizes = [];
-        const colors = [];
-
-        for (let i = 0; i < starCount; i++) {
-          positions.push(
-            THREE.Math.randFloatSpread(5000),
-            THREE.Math.randFloatSpread(5000),
-            THREE.Math.randFloatSpread(5000)
-          );
-
-          sizes.push(5.0 + Math.random() * 10.0);
-
-          const colorChoice = Math.random();
-          if (colorChoice < 0.33) {
-            // White
-            colors.push(1, 1, 1); // R, G, B
-          } else if (colorChoice < 0.66) {
-            // Yellow
-            colors.push(1, 1, 0); // R, G, B
-          } else {
-            // Blue
-            colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
+          for (let i = 0, l = customColor.count; i < l; i++) {
+            color.setHSL(i / l, 0.5, 0.5);
+            color.toArray(customColor.array, i * customColor.itemSize);
           }
+
+          line = new THREE.Line(textGeo, shaderMaterial);
+          line.position.y = 15;
+          line.rotation.x = 0.2;
+          line.visible = false; // Assuming 'line' is your 3D text mesh
+          scenePlanet.add(line);
         }
 
-        geometry.setAttribute(
-          "position",
-          new THREE.Float32BufferAttribute(positions, 3)
-        );
-        geometry.setAttribute(
-          "size",
-          new THREE.Float32BufferAttribute(sizes, 1)
-        );
-        geometry.setAttribute(
-          "customColor",
-          new THREE.Float32BufferAttribute(colors, 3)
-        );
-
-        const material = new THREE.ShaderMaterial({
-          uniforms: starMaterialUniforms,
-          vertexShader: document.getElementById("starVertexShader").textContent,
+        const atmosphereShaderMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById("atmVertexShader").textContent,
           fragmentShader:
-            document.getElementById("starFragmentShader").textContent,
+            document.getElementById("atmFragmentShader").textContent,
+          blending: THREE.AdditiveBlending,
+          side: THREE.BackSide,
+        });
+
+        const abg = new THREE.SphereBufferGeometry(1.75, 32, 32);
+        const atmosphere = new THREE.Mesh(abg, atmosphereShaderMaterial);
+        scenePlanet.add(atmosphere);
+
+        // CLOUDS
+        const cloudShaderMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            cloudTexture: {
+              value: textureLoader.load("./images/fair_clouds_4k.png"),
+              time: { value: 0 },
+            },
+          },
+          vertexShader: document.getElementById("cloudVertexShader").textContent,
+          fragmentShader: document.getElementById("cloudFragmentShader")
+            .textContent,
           blending: THREE.AdditiveBlending,
           depthTest: false,
           transparent: true,
           vertexColors: true,
         });
+        const cbg = new THREE.SphereBufferGeometry(1.007, 32, 32);
+        const clouds = new THREE.Mesh(cbg, cloudShaderMaterial);
+        scenePlanet.add(clouds);
 
-        const starField = new THREE.Points(geometry, material);
-        scenePlanet.add(starField);
-      }
-      createStarfield();
+        // STARFIELD
+        const starMaterialUniforms = {
+          pointTexture: {
+            value: textureLoader.load("images/wc.png"),
+          },
+          time: { value: 0.0 },
+        };
 
-      // SHOOTING STARS
-      const shootingStarMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            time: { value: 0.0 },
-            pointTexture: { value: textureLoader.load('images/wc.png') },
-            starColor: { type: "v3", value: new THREE.Color(0xffffff) },
-            glowIntensity: { type: "f", value: 1.5 },
-        },
-        vertexShader: document.getElementById('shootingStarVertexShader').textContent,
-        fragmentShader: document.getElementById('shootingStarFragmentShader').textContent,
-        transparent: true,
-        depthTest: false,
-        blending: THREE.AdditiveBlending,
-        vertexColors: true,
-      });
+        function createStarfield() {
+          const starCount = 100000;
+          const geometry = new THREE.BufferGeometry();
+          const positions = [];
+          const sizes = [];
+          const colors = [];
 
-      const shootingStars = [];
+          for (let i = 0; i < starCount; i++) {
+            positions.push(
+              THREE.Math.randFloatSpread(5000),
+              THREE.Math.randFloatSpread(5000),
+              THREE.Math.randFloatSpread(5000)
+            );
 
+            sizes.push(5.0 + Math.random() * 10.0);
 
-      function createShootingStar() {
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(
-          3
-      //   [
-      //   THREE.Math.randFloatSpread(100), // X
-      //   THREE.Math.randFloatSpread(100), // Y
-      //   THREE.Math.randFloatSpread(100)  // Z
-      // ]
-      ); // x, y, z
-      const colors = [];
-
-      // Randomize initial position around the Earth
-      const radius = 100; // Example radius around the Earth where shooting stars can start
-      const theta = Math.random() * 2 * Math.PI;
-      const phi = Math.acos(2 * Math.random() - 1);
-      positions[0] = radius * Math.sin(phi) * Math.cos(theta); // X
-      positions[1] = radius * Math.sin(phi) * Math.sin(theta); // Y
-      positions[2] = radius * Math.cos(phi); // Z
-
-      // Random velocity direction
-      const speed = 30; // Example speed, adjust as necessary
-        const velocity = new THREE.Vector3(
-            (Math.random() - 0.5) * speed,
-            (Math.random() - 0.5) * speed,
-            (Math.random() - 0.5) * speed
-        );
-
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geometry.setAttribute(
-          "customColor",
-          new THREE.Float32BufferAttribute(colors, 3)
-        );
-
-        const colorChoice = Math.random();
-          if (colorChoice < 0.33) {
-            // White
-            colors.push(1, 1, 1); // R, G, B
-          } else if (colorChoice < 0.66) {
-            // Yellow
-            colors.push(1, 1, 0); // R, G, B
-          } else {
-            // Blue
-            colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
+            const colorChoice = Math.random();
+            if (colorChoice < 0.33) {
+              // White
+              colors.push(1, 1, 1); // R, G, B
+            } else if (colorChoice < 0.66) {
+              // Yellow
+              colors.push(1, 1, 0); // R, G, B
+            } else {
+              // Blue
+              colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
+            }
           }
 
-        const starMaterial = shootingStarMaterial.clone();
-        starMaterial.vertexColors = true;
-        starMaterial.uniforms.starColor.value = colors;
+          geometry.setAttribute(
+            "position",
+            new THREE.Float32BufferAttribute(positions, 3)
+          );
+          geometry.setAttribute(
+            "size",
+            new THREE.Float32BufferAttribute(sizes, 1)
+          );
+          geometry.setAttribute(
+            "customColor",
+            new THREE.Float32BufferAttribute(colors, 3)
+          );
 
-        const star = new THREE.Points(geometry, starMaterial);
+          const material = new THREE.ShaderMaterial({
+            uniforms: starMaterialUniforms,
+            vertexShader: document.getElementById("starVertexShader").textContent,
+            fragmentShader:
+              document.getElementById("starFragmentShader").textContent,
+            blending: THREE.AdditiveBlending,
+            depthTest: false,
+            transparent: true,
+            vertexColors: true,
+          });
 
-        // Trail
-        const trailMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const trailGeometry = new THREE.BufferGeometry();
-        const trailPositions = new Float32Array(6); // 2 points: x1, y1, z1, x2, y2, z2
-        trailGeometry.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
-        const trail = new THREE.Line(trailGeometry, trailMaterial);
+          const starField = new THREE.Points(geometry, material);
+          scenePlanet.add(starField);
+        }
+        createStarfield();
 
-        scenePlanet.add(star, trail);
+        // SHOOTING STARS
+        const shootingStarMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+              time: { value: 0.0 },
+              pointTexture: { value: textureLoader.load('images/wc.png') },
+              starColor: { type: "v3", value: new THREE.Color(0xffffff) },
+              glowIntensity: { type: "f", value: 1.5 },
+          },
+          vertexShader: document.getElementById('shootingStarVertexShader').textContent,
+          fragmentShader: document.getElementById('shootingStarFragmentShader').textContent,
+          transparent: true,
+          depthTest: false,
+          blending: THREE.AdditiveBlending,
+          vertexColors: true,
+        });
 
-        return { star, trail, velocity, colors };
-      }
+        const shootingStars = [];
 
-      // Create multiple shooting stars
-      for (let i = 0; i < 100; i++) { // Create 5 shooting stars
-          shootingStars.push(createShootingStar());
-      }
 
-      function updateShootingStars(deltaTime) {
-        shootingStars.forEach(shootingStar => {
-            const positionAttr = shootingStar.star.geometry.attributes.position;
-            const positions = positionAttr.array;
+        function createShootingStar() {
+          const geometry = new THREE.BufferGeometry();
+          const positions = new Float32Array(
+            3
+        //   [
+        //   THREE.Math.randFloatSpread(100), // X
+        //   THREE.Math.randFloatSpread(100), // Y
+        //   THREE.Math.randFloatSpread(100)  // Z
+        // ]
+        ); // x, y, z
+        const colors = [];
 
-            // Update position based on velocity
-            positions[0] += shootingStar.velocity.x * deltaTime;
-            positions[1] += shootingStar.velocity.y * deltaTime;
-            positions[2] += shootingStar.velocity.z * deltaTime;
+        // Randomize initial position around the Earth
+        const radius = 100; // Example radius around the Earth where shooting stars can start
+        const theta = Math.random() * 2 * Math.PI;
+        const phi = Math.acos(2 * Math.random() - 1);
+        positions[0] = radius * Math.sin(phi) * Math.cos(theta); // X
+        positions[1] = radius * Math.sin(phi) * Math.sin(theta); // Y
+        positions[2] = radius * Math.cos(phi); // Z
 
-            // Calculate the distance from the center
-            const distance = Math.sqrt(positions[0] ** 2 + positions[1] ** 2 + positions[2] ** 2);
-            const resetDistance = 300; // Example reset boundary, adjust as needed
+        // Random velocity direction
+        const speed = 30; // Example speed, adjust as necessary
+          const velocity = new THREE.Vector3(
+              (Math.random() - 0.5) * speed,
+              (Math.random() - 0.5) * speed,
+              (Math.random() - 0.5) * speed
+          );
 
-            // Check if the shooting star is beyond the reset distance
-            if (distance > resetDistance) {
-                // Reset position to a new random location around the scene
-                const radius = 5; // Example start radius, adjust as needed
-                const theta = Math.random() * 2 * Math.PI;
-                const phi = Math.acos(2 * Math.random() - 1);
-                positions[0] = radius * Math.sin(phi) * Math.cos(theta);
-                positions[1] = radius * Math.sin(phi) * Math.sin(theta);
-                positions[2] = radius * Math.cos(phi);
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute(
+            "customColor",
+            new THREE.Float32BufferAttribute(colors, 3)
+          );
 
-                // Optionally, reset velocity for varied trajectories
-                const speed = 5; // Adjust speed as necessary
-                shootingStar.velocity.set(
-                    (Math.random() - 0.5) * speed,
-                    (Math.random() - 0.5) * speed,
-                    (Math.random() - 0.5) * speed
-                );
+          const colorChoice = Math.random();
+            if (colorChoice < 0.33) {
+              // White
+              colors.push(1, 1, 1); // R, G, B
+            } else if (colorChoice < 0.66) {
+              // Yellow
+              colors.push(1, 1, 0); // R, G, B
+            } else {
+              // Blue
+              colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
             }
 
-            // Update the geometry to reflect the new position
-            positionAttr.needsUpdate = true;
+          const starMaterial = shootingStarMaterial.clone();
+          starMaterial.vertexColors = true;
+          starMaterial.uniforms.starColor.value = colors;
 
-        });
-    }
+          const star = new THREE.Points(geometry, starMaterial);
 
-      // CITIES
-      let points = [
-        {
-          title: "Current Location",
-          coords: {
-            lat: 42.496815,
-            lng: -92.330469,
-          },
-        },
-        {
-          title: "Chicago, US",
-          coords: {
-            lat: 41.8781,
-            lng: -87.6298,
-          },
-        },
-        {
-          title: "New Delhi, IN",
-          coords: {
-            lat: 28.6139,
-            lng: 77.209,
-          },
-        },
-        {
-          title: "Kyiv, UA",
-          coords: {
-            lat: 50.4501,
-            lng: 30.5234,
-          },
-        },
-        {
-          title: "Paris, EU",
-          coords: {
-            lat: 48.8566,
-            lng: 2.3522,
-          },
-        },
-        {
-          title: "Seoul, KR",
-          coords: {
-            lat: 37.5665,
-            lng: 126.978,
-          },
-        },
-        {
-          title: "Daisen, JP",
-          coords: {
-            lat: 39.45304,
-            lng: 140.47545,
-          },
-        },
-        {
-          title: "Egypt, AF",
-          coords: {
-            lat: 26.8206,
-            lng: 30.8025,
-          },
-        },
-        {
-          title: "Brazil, SA",
-          coords: {
-            lat: -14.235,
-            lng: -51.9253,
-          },
-        },
-        {
-          title: "Mexico City, MX",
-          coords: {
-            lat: 19.4326,
-            lng: -99.1332,
-          },
-        },
-        {
-          title: "Alice Springs, AU",
-          coords: {
-            lat: -23.698,
-            lng: 133.8807,
-          },
-        },
-        {
-          title: "Gansu, CN",
-          coords: {
-            lat: 36.0594,
-            lng: 103.8263,
-          },
-        },
-        {
-          title: "South Pole, AQ",
-          coords: {
-            lat: 90.0,
-            lng: 45.0,
-          },
-        },
-        {
-          title: "Chile, SA",
-          coords: {
-            lat: -35.6751,
-            lng: -71.543,
-          },
-        },
-        {
-          title: "Sabah, MA",
-          coords: {
-            lat: 5.9788,
-            lng: 116.0753,
-          },
-        },
-        {
-          title: "Cancun, MX",
-          coords: {
-            lat: 21.1619,
-            lng: -86.8515,
-          },
-        },
-        {
-          title: "Zambia, AF",
-          coords: {
-            lat: -13.1339,
-            lng: 27.8493,
-          },
-        },
-        {
-          title: "Ash-Shahaniyah, QA",
-          coords: {
-            lat: 25.4106,
-            lng: 51.1846,
-          },
-        },
-      ];
+          // Trail
+          const trailMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+          const trailGeometry = new THREE.BufferGeometry();
+          const trailPositions = new Float32Array(6); // 2 points: x1, y1, z1, x2, y2, z2
+          trailGeometry.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+          const trail = new THREE.Line(trailGeometry, trailMaterial);
 
-      // CALCULATE POSITION FROM LATITUDE & LONGITUDE IN RADIANS
-      function calcPosFromLatLonRad(lat, lon) {
-        var phi = (lat * Math.PI) / 180;
-        var theta = ((lon + 180) * Math.PI) / 180;
-        var theta2 = ((270 - lon) * Math.PI) / 180;
+          star.visible = false;
+          trail.visible = false;
+          scenePlanet.add(star, trail);
 
-        let x = -(Math.cos(phi) * Math.cos(theta));
-        let z = Math.cos(phi) * Math.sin(theta);
-        let y = Math.sin(phi);
-        let vector = { x, y, z };
-        let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
-        let quaternion = new THREE.Quaternion().setFromEuler(euler);
-        return { vector, quaternion };
+          return { star, trail, velocity, colors };
+        }
+
+        // Create multiple shooting stars
+        for (let i = 0; i < 50; i++) { // Create 5 shooting stars
+            shootingStars.push(createShootingStar());
+        }
+
+        function updateShootingStars(deltaTime) {
+          shootingStars.forEach(shootingStar => {
+              const positionAttr = shootingStar.star.geometry.attributes.position;
+              const positions = positionAttr.array;
+
+              // Update position based on velocity
+              positions[0] += shootingStar.velocity.x * deltaTime;
+              positions[1] += shootingStar.velocity.y * deltaTime;
+              positions[2] += shootingStar.velocity.z * deltaTime;
+
+              // Calculate the distance from the center
+              const distance = Math.sqrt(positions[0] ** 2 + positions[1] ** 2 + positions[2] ** 2);
+              const resetDistance = 300; // Example reset boundary, adjust as needed
+
+              // Check if the shooting star is beyond the reset distance
+              if (distance > resetDistance) {
+                  // Reset position to a new random location around the scene
+                  const radius = 10; // Example start radius, adjust as needed
+                  const theta = Math.random() * 2 * Math.PI;
+                  const phi = Math.acos(2 * Math.random() - 1);
+                  positions[0] = radius * Math.sin(phi) * Math.cos(theta);
+                  positions[1] = radius * Math.sin(phi) * Math.sin(theta);
+                  positions[2] = radius * Math.cos(phi);
+
+                  // Optionally, reset velocity for varied trajectories
+                  const speed = 5; // Adjust speed as necessary
+                  shootingStar.velocity.set(
+                      (Math.random() - 0.5) * speed,
+                      (Math.random() - 0.5) * speed,
+                      (Math.random() - 0.5) * speed
+                  );
+              }
+
+              // Update the geometry to reflect the new position
+              positionAttr.needsUpdate = true;
+
+          });
       }
 
-      // CREATE MARKERS
-      var marker = new THREE.Group();
+        // CITIES
+        let points = [
+          {
+            title: "Current Location",
+            coords: {
+              lat: 42.496815,
+              lng: -92.330469,
+            },
+          },
+          {
+            title: "Chicago, US",
+            coords: {
+              lat: 41.8781,
+              lng: -87.6298,
+            },
+          },
+          {
+            title: "New Delhi, IN",
+            coords: {
+              lat: 28.6139,
+              lng: 77.209,
+            },
+          },
+          {
+            title: "Kyiv, UA",
+            coords: {
+              lat: 50.4501,
+              lng: 30.5234,
+            },
+          },
+          {
+            title: "Paris, EU",
+            coords: {
+              lat: 48.8566,
+              lng: 2.3522,
+            },
+          },
+          {
+            title: "Seoul, KR",
+            coords: {
+              lat: 37.5665,
+              lng: 126.978,
+            },
+          },
+          {
+            title: "Daisen, JP",
+            coords: {
+              lat: 39.45304,
+              lng: 140.47545,
+            },
+          },
+          {
+            title: "Egypt, AF",
+            coords: {
+              lat: 26.8206,
+              lng: 30.8025,
+            },
+          },
+          {
+            title: "Brazil, SA",
+            coords: {
+              lat: -14.235,
+              lng: -51.9253,
+            },
+          },
+          {
+            title: "Mexico City, MX",
+            coords: {
+              lat: 19.4326,
+              lng: -99.1332,
+            },
+          },
+          {
+            title: "Alice Springs, AU",
+            coords: {
+              lat: -23.698,
+              lng: 133.8807,
+            },
+          },
+          {
+            title: "Gansu, CN",
+            coords: {
+              lat: 36.0594,
+              lng: 103.8263,
+            },
+          },
+          {
+            title: "South Pole, AQ",
+            coords: {
+              lat: 90.0,
+              lng: 45.0,
+            },
+          },
+          {
+            title: "Chile, SA",
+            coords: {
+              lat: -35.6751,
+              lng: -71.543,
+            },
+          },
+          {
+            title: "Sabah, MA",
+            coords: {
+              lat: 5.9788,
+              lng: 116.0753,
+            },
+          },
+          {
+            title: "Cancun, MX",
+            coords: {
+              lat: 21.1619,
+              lng: -86.8515,
+            },
+          },
+          {
+            title: "Zambia, AF",
+            coords: {
+              lat: -13.1339,
+              lng: 27.8493,
+            },
+          },
+          {
+            title: "Ash-Shahaniyah, QA",
+            coords: {
+              lat: 25.4106,
+              lng: 51.1846,
+            },
+          },
+        ];
 
-      const coneMaterial = new THREE.ShaderMaterial({
-        vertexShader: document.getElementById("coneVertexShader").textContent,
-        fragmentShader:
-          document.getElementById("coneFragmentShader").textContent,
-        uniforms: {
+        // CALCULATE POSITION FROM LATITUDE & LONGITUDE IN RADIANS
+        function calcPosFromLatLonRad(lat, lon) {
+          var phi = (lat * Math.PI) / 180;
+          var theta = ((lon + 180) * Math.PI) / 180;
+          var theta2 = ((270 - lon) * Math.PI) / 180;
+
+          let x = -(Math.cos(phi) * Math.cos(theta));
+          let z = Math.cos(phi) * Math.sin(theta);
+          let y = Math.sin(phi);
+          let vector = { x, y, z };
+          let euler = new THREE.Euler(phi, theta2, 0, "XYZ");
+          let quaternion = new THREE.Quaternion().setFromEuler(euler);
+          return { vector, quaternion };
+        }
+
+        // CREATE MARKERS
+        var marker = new THREE.Group();
+
+        const coneMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById("coneVertexShader").textContent,
+          fragmentShader:
+            document.getElementById("coneFragmentShader").textContent,
+          uniforms: {
+            time: { value: 0.0 },
+          },
+          transparent: true,
+        });
+
+        const sphereMaterialUniforms = {
           time: { value: 0.0 },
-        },
-        transparent: true,
-      });
+        };
 
-      const sphereMaterialUniforms = {
-        time: { value: 0.0 },
-      };
-
-      const sphereShaderMaterial = new THREE.ShaderMaterial({
-        vertexShader: document.getElementById("sphereVertexShader").textContent,
-        fragmentShader: document.getElementById("sphereFragmentShader")
-          .textContent,
-        uniforms: sphereMaterialUniforms,
-        transparent: true,
-      });
-
-      function createMarker(lat, lon) {
-        var sphereGeometry = new THREE.SphereBufferGeometry(0.01, 32, 32);
-        var sphere = new THREE.Mesh(sphereGeometry, sphereShaderMaterial);
-
-        var coneGeometry = new THREE.ConeBufferGeometry(0.008, 0.2, 32);
-        var cone = new THREE.Mesh(coneGeometry, coneMaterial);
-        cone.position.y = -0.13;
-
-        marker.add(sphere);
-        marker.add(cone);
-
-        var position = calcPosFromLatLonRad(lat, lon).vector;
-
-        marker.position.x = position.x;
-        marker.position.y = position.y;
-        marker.position.z = position.z;
-
-        marker.lookAt(new THREE.Vector3(0, 0, 0));
-
-        return marker;
-      }
-
-      // ROTATE TO SELECTED CITY
-      function rotateToCity(lat, lon) {
-        const { vector, quaternion } = calcPosFromLatLonRad(lat, lon);
-
-        gsap.to(group.quaternion, {
-          x: quaternion.x,
-          y: quaternion.y,
-          z: quaternion.z,
-          w: quaternion.w,
-          duration: 3,
-          ease: "power3.inOut",
-          onUpdate: function () {
-            controls.update();
-          },
-        });
-      }
-
-      // function getCurve(p1,p2) {
-      //   let v1 = new THREE.Vector3(p1.x, p1.y, p1.z);
-      //   let v2 = new THREE.Vector3(p2.x, p2.y, p2.z);
-      //   let points = [];
-      //   for (let i = 0; i <= 20; i++){
-
-      //     let p = new THREE.Vector3().lerpVectors(v1, v2, i/20);
-      //     p.normalize();
-      //     p.multiplyScalar(1 + 0.1*Math.sin(Math.PI*i/20));
-      //     points.push(p);
-      //   };
-
-      //   let path = new THREE.CatmullRomCurve3(points);
-
-      //   const geometry = new THREE.TubeGeometry( path, 20, 0.01, 8, false );
-      //   const material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
-      //   const mesh = new THREE.Mesh( geometry, material );
-      //   scenePlanet.add( mesh );
-      // }
-
-      //getCurve(pos,pos1);
-
-      // CONTROLS SECTION STARTS
-
-      // Drag Controls
-      //let objects = [box];
-
-      //const dControls = new DragControls(box, camera, renderer.domElement);
-
-      //dControls.enabled = true;
-
-      // dControls.deactivate();
-      // dControls.activate();
-
-      // // Drag Controls Event Listeners
-      // dControls.addEventListener("hoveron", function(event){
-      //     event.object.material.wireframe = true;
-      // });
-
-      // // Drag Controls Event Listeners
-      // dControls.addEventListener("hoveroff", function(event){
-      //     event.object.material.wireframe = false;
-
-      // });
-
-      // dControls.addEventListener("dragstart", function(event){
-      //     event.object.material.transparent = true;
-      //     event.object.material.opacity = 0.5;
-      // });
-
-      // dControls.addEventListener("dragend", function(event){
-      //     event.object.material.opacity = 1.0;
-
-      // });
-
-      // // First Person Controls
-      // const fpControls = new FirstPersonControls(camera, renderer.domElement);
-
-      // fpControls.enabled = true;
-
-      // fpControls.activeLook = false;
-
-      // fpControls.lookVertical = true;
-
-      // fpControls.constrainVertical = true;
-      // fpControls.verticalMin = Math.PI / 1.7;
-      // fpControls.verticalMax = Math.PI / 2.3;
-
-      // // Fly Controls
-      // const flyControls = new FlyControls(camera, renderer.domElement);
-
-      // flyControls.movementSpeed = 10;
-
-      // flyControls.rollSpeed = 0.05;
-
-      // flyControls.autoFoward = false;
-
-      // flyControls.dragToLook = true;
-
-      // ORBIT CONTROLS
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enabled = true;
-      //controls.target = scenePlanet.position;
-
-      controls.minDistance = 7.5;
-      controls.maxDistance = 5000;
-
-      controls.enableDamping = false;
-      controls.dampingFactor = 0.01;
-
-      controls.autoRotate = false;
-      controls.autoRotateSpeed = 1.0;
-
-      controls.enableZoom = true;
-      controls.zoomSpeed = 1.0;
-
-      controls.enableRotate = false;
-      controls.rotateSpeed = 1.0;
-
-      const clock = new THREE.Clock();
-      const speed = 0.03;
-      let dt = 0;
-
-      // ANIMATE
-      function animate() {
-        // dControls.update();
-        // fpControls.update(1.0);
-        // flyControls.update(0.01);
-
-        const time = Date.now() * 0.001;
-
-        clouds.rotation.y -= 0.0006;
-        clouds.rotation.z += 0.0015;
-        clouds.rotation.x -= 0.0006;
-
-        atmosphere.rotation.x += 0.005;
-        atmosphere.rotation.y -= 0.01;
-        atmosphere.rotation.z += 0.005;
-
-        line.rotation.y = 0.7 * time;
-
-        uniforms.amplitude.value = 0.3 * Math.sin(0.2 * time);
-        uniforms.color.value.offsetHSL(0.05, 2, 0);
-
-        starMaterialUniforms.time.value += 0.01;
-
-        const deltaTime = clock.getDelta();
-    
-        shootingStars.forEach(({ star, trail, velocity, colors }) => {
-            // Update star position
-            const positions = star.geometry.attributes.position.array;
-            positions[0] += velocity.x * deltaTime * 50; // Adjust speed
-            positions[1] += velocity.y * deltaTime * 50;
-            positions[2] += velocity.z * deltaTime * 50;
-
-            // Update trail to follow the star
-            const trailPositions = trail.geometry.attributes.position.array;
-            trailPositions[0] = positions[0]; // Start of the trail
-            trailPositions[1] = positions[1];
-            trailPositions[2] = positions[2];
-            // End of the trail, slightly behind the star
-            trailPositions[3] = positions[0] - velocity.x * 5;
-            trailPositions[4] = positions[1] - velocity.y * 5;
-            trailPositions[5] = positions[2] - velocity.z * 5;
-
-            star.geometry.attributes.position.needsUpdate = true;
-            trail.geometry.attributes.position.needsUpdate = true;
+        const sphereShaderMaterial = new THREE.ShaderMaterial({
+          vertexShader: document.getElementById("sphereVertexShader").textContent,
+          fragmentShader: document.getElementById("sphereFragmentShader")
+            .textContent,
+          uniforms: sphereMaterialUniforms,
+          transparent: true,
         });
 
-        updateShootingStars(deltaTime);
+        function createMarker(lat, lon) {
+          var sphereGeometry = new THREE.SphereBufferGeometry(0.01, 32, 32);
+          var sphere = new THREE.Mesh(sphereGeometry, sphereShaderMaterial);
 
-        coneMaterial.uniforms.time.value += 0.02;
+          var coneGeometry = new THREE.ConeBufferGeometry(0.008, 0.2, 32);
+          var cone = new THREE.Mesh(coneGeometry, coneMaterial);
+          cone.position.y = -0.13;
 
-        sphereMaterialUniforms.time.value += 0.02;
+          marker.add(sphere);
+          marker.add(cone);
 
-        if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
-          const delta = clock.getDelta();
-          cloudShaderMaterial.uniforms.time.value += delta * 0.2;
+          var position = calcPosFromLatLonRad(lat, lon).vector;
+
+          marker.position.x = position.x;
+          marker.position.y = position.y;
+          marker.position.z = position.z;
+
+          marker.lookAt(new THREE.Vector3(0, 0, 0));
+
+          return marker;
         }
 
-        const attributes = line.geometry.attributes;
-        const array = attributes.displacement.array;
+        // ROTATE TO SELECTED CITY
+        function rotateToCity(lat, lon) {
+          const { vector, quaternion } = calcPosFromLatLonRad(lat, lon);
 
-        for (let i = 0, l = array.length; i < l; i += 3) {
-          array[i] += 0.3 * (0.5 - Math.random());
-          array[i + 1] += 0.3 * (0.5 - Math.random());
-          array[i + 2] += 0.3 * (0.5 - Math.random());
+          gsap.to(group.quaternion, {
+            x: quaternion.x,
+            y: quaternion.y,
+            z: quaternion.z,
+            w: quaternion.w,
+            duration: 3,
+            ease: "power3.inOut",
+            onUpdate: function () {
+              controls.update();
+            },
+          });
         }
 
-        attributes.displacement.needsUpdate = true;
+        // function getCurve(p1,p2) {
+        //   let v1 = new THREE.Vector3(p1.x, p1.y, p1.z);
+        //   let v2 = new THREE.Vector3(p2.x, p2.y, p2.z);
+        //   let points = [];
+        //   for (let i = 0; i <= 20; i++){
 
-        // updateShaderUniforms();
+        //     let p = new THREE.Vector3().lerpVectors(v1, v2, i/20);
+        //     p.normalize();
+        //     p.multiplyScalar(1 + 0.1*Math.sin(Math.PI*i/20));
+        //     points.push(p);
+        //   };
 
-        controls.update();
-        requestAnimationFrame(animate);
-        renderer.render(scenePlanet, camera);
-        stats.update();
-      }
-    </script>
-    <!-- JS SECTION ENDS -->
+        //   let path = new THREE.CatmullRomCurve3(points);
 
-    <!-- CDNJS THREE JS LIBRARY LINK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+        //   const geometry = new THREE.TubeGeometry( path, 20, 0.01, 8, false );
+        //   const material = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+        //   const mesh = new THREE.Mesh( geometry, material );
+        //   scenePlanet.add( mesh );
+        // }
 
-    <!-- GLTF LOADER LINK FOR SATELITES/MOON FLOATING IN ORBIT 
-    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
+        //getCurve(pos,pos1);
 
-    <!-- CDNJS GSAP LIBRARY LINK -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+        // CONTROLS SECTION STARTS
 
-    <!-- CDNJS GSAP CUSTOM EASE LINK -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"
-      integrity="sha512-4a56NRIrhn/ePBdSSNfwsmL+eZt/uCXEb7s+3B8tg/tDiywDMKb5u2QCdhsYQtEkUMPGE5GUVbZYqgKeRzJ7yQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-  </body>
+        // Drag Controls
+        //let objects = [box];
+
+        //const dControls = new DragControls(box, camera, renderer.domElement);
+
+        //dControls.enabled = true;
+
+        // dControls.deactivate();
+        // dControls.activate();
+
+        // // Drag Controls Event Listeners
+        // dControls.addEventListener("hoveron", function(event){
+        //     event.object.material.wireframe = true;
+        // });
+
+        // // Drag Controls Event Listeners
+        // dControls.addEventListener("hoveroff", function(event){
+        //     event.object.material.wireframe = false;
+
+        // });
+
+        // dControls.addEventListener("dragstart", function(event){
+        //     event.object.material.transparent = true;
+        //     event.object.material.opacity = 0.5;
+        // });
+
+        // dControls.addEventListener("dragend", function(event){
+        //     event.object.material.opacity = 1.0;
+
+        // });
+
+        // // First Person Controls
+        // const fpControls = new FirstPersonControls(camera, renderer.domElement);
+
+        // fpControls.enabled = true;
+
+        // fpControls.activeLook = false;
+
+        // fpControls.lookVertical = true;
+
+        // fpControls.constrainVertical = true;
+        // fpControls.verticalMin = Math.PI / 1.7;
+        // fpControls.verticalMax = Math.PI / 2.3;
+
+        // // Fly Controls
+        // const flyControls = new FlyControls(camera, renderer.domElement);
+
+        // flyControls.movementSpeed = 10;
+
+        // flyControls.rollSpeed = 0.05;
+
+        // flyControls.autoFoward = false;
+
+        // flyControls.dragToLook = true;
+
+        // ORBIT CONTROLS
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enabled = true;
+        //controls.target = scenePlanet.position;
+
+        controls.minDistance = 7.5;
+        controls.maxDistance = 5000;
+
+        controls.enableDamping = false;
+        controls.dampingFactor = 0.01;
+
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 1.0;
+
+        controls.enableZoom = true;
+        controls.zoomSpeed = 1.0;
+
+        controls.enableRotate = false;
+        controls.rotateSpeed = 1.0;
+
+        const clock = new THREE.Clock();
+        const speed = 0.03;
+        let dt = 0;
+
+        // ANIMATE
+        function animate() {
+          // dControls.update();
+          // fpControls.update(1.0);
+          // flyControls.update(0.01);
+
+          const time = Date.now() * 0.001;
+
+          clouds.rotation.y -= 0.0006;
+          clouds.rotation.z += 0.0015;
+          clouds.rotation.x -= 0.0006;
+
+          atmosphere.rotation.x += 0.005;
+          atmosphere.rotation.y -= 0.01;
+          atmosphere.rotation.z += 0.005;
+
+          line.rotation.y = 0.7 * time;
+
+          uniforms.amplitude.value = 0.3 * Math.sin(0.2 * time);
+          uniforms.color.value.offsetHSL(0.05, 2, 0);
+
+          starMaterialUniforms.time.value += 0.01;
+
+          const deltaTime = clock.getDelta();
+      
+          shootingStars.forEach(({ star, trail, velocity, colors }) => {
+              // Update star position
+              const positions = star.geometry.attributes.position.array;
+              positions[0] += velocity.x * deltaTime * 50; // Adjust speed
+              positions[1] += velocity.y * deltaTime * 50;
+              positions[2] += velocity.z * deltaTime * 50;
+
+              // Update trail to follow the star
+              const trailPositions = trail.geometry.attributes.position.array;
+              trailPositions[0] = positions[0]; // Start of the trail
+              trailPositions[1] = positions[1];
+              trailPositions[2] = positions[2];
+              // End of the trail, slightly behind the star
+              trailPositions[3] = positions[0] - velocity.x * 5;
+              trailPositions[4] = positions[1] - velocity.y * 5;
+              trailPositions[5] = positions[2] - velocity.z * 5;
+
+              star.geometry.attributes.position.needsUpdate = true;
+              trail.geometry.attributes.position.needsUpdate = true;
+          });
+
+          updateShootingStars(deltaTime);
+
+          coneMaterial.uniforms.time.value += 0.02;
+
+          sphereMaterialUniforms.time.value += 0.02;
+
+          if (cloudShaderMaterial && cloudShaderMaterial.uniforms.time) {
+            const delta = clock.getDelta();
+            cloudShaderMaterial.uniforms.time.value += delta * 0.2;
+          }
+
+          const attributes = line.geometry.attributes;
+          const array = attributes.displacement.array;
+
+          for (let i = 0, l = array.length; i < l; i += 3) {
+            array[i] += 0.3 * (0.5 - Math.random());
+            array[i + 1] += 0.3 * (0.5 - Math.random());
+            array[i + 2] += 0.3 * (0.5 - Math.random());
+          }
+
+          attributes.displacement.needsUpdate = true;
+
+          // updateShaderUniforms();
+
+          controls.update();
+          requestAnimationFrame(animate);
+          renderer.render(scenePlanet, camera);
+          stats.update();
+        }
+      </script>
+      <!-- JS SECTION ENDS -->
+
+      <!-- CDNJS THREE JS LIBRARY LINK -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+
+      <!-- GLTF LOADER LINK FOR SATELITES/MOON FLOATING IN ORBIT 
+      <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script> -->
+
+      <!-- CDNJS GSAP LIBRARY LINK -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+      <!-- CDNJS GSAP CUSTOM EASE LINK -->
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"
+        integrity="sha512-4a56NRIrhn/ePBdSSNfwsmL+eZt/uCXEb7s+3B8tg/tDiywDMKb5u2QCdhsYQtEkUMPGE5GUVbZYqgKeRzJ7yQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      ></script>
+    </body>
 </html>
