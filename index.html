@@ -190,7 +190,6 @@
     <!-- CLOUD SHADERS END -->
 
     <!-- ATMOSPHERE SHADERS START -->
-
     <script type="x-shader/x-vertex" id="atmVertexShader">
       varying vec3 vertexNormal;
 
@@ -208,7 +207,6 @@
         gl_FragColor = vec4(0.3, 0.6, 1.0, 6.0) * intensity;
       }
     </script>
-
     <!-- ATMOSPHERE SHADERS END -->
 
     <!-- 360 SHADERS START -->
@@ -304,7 +302,6 @@
           gl_FragColor = color;
       }
     </script>
-
     <!-- SPHERE MARKER SHADERS END -->
     <!-- MARKER SHADERS END -->
 
@@ -319,7 +316,7 @@
 
       void main() {
           vColor = customColor;
-          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 3.0 + time) * 1.5, cos(position.y * 3.0 + time) * 1.5, 0.0), 1.0);
+          vec4 mvPosition = modelViewMatrix * vec4(position + vec3(sin(position.x * 2.0 + time) * 1.5, cos(position.y * 2.0 + time) * 1.5, 0.0), 1.0);
           gl_PointSize = size * (300.0 / -mvPosition.z);
           gl_Position = projectionMatrix * mvPosition;
       }
@@ -342,8 +339,52 @@
         }
       }
     </script>
-
     <!-- STAR SHADERS END -->
+
+    <!-- SHOOTING STAR SHADERS START -->
+    <script type="x-shader/x-vertex" id="shootingStarVertexShader">
+        attribute float size;
+        attribute vec3 customColor;
+        varying vec3 vColor;
+        varying float vStreakOpacity;
+        
+        uniform float time;
+        
+        void main() {
+            vColor = customColor;
+        
+            // Position the shooting star
+            vec3 modPosition = position;
+            modPosition.x -= time * 100.0; // Horizontal movement
+            modPosition.y += sin(time + position.x) * 20.0; // Wavy vertical movement
+        
+            // Calculate streak opacity based on x-position to create the streak effect
+            float streakLength = 150.0; // Adjust the length of the streak
+            float distanceFromLeadingEdge = mod(modPosition.x - time * 100.0, streakLength);
+            vStreakOpacity = 2.0 - distanceFromLeadingEdge / streakLength;
+        
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(modPosition, 1.0);
+            gl_PointSize = size * (300.0 / -gl_Position.z);
+        }
+    </script>  
+      
+    <script type="x-shader/x-fragment" id="shootingStarFragmentShader">
+      uniform sampler2D pointTexture;
+      uniform vec3 starColor;
+      uniform float glowIntensity;
+
+      varying vec3 vColor;
+      varying float vStreakOpacity;
+
+      void main() {
+          vec4 texel = texture2D(pointTexture, gl_PointCoord);
+          vec3 glowColor = starColor * glowIntensity;
+          
+          // Apply the glow based on texture alpha and streak opacity
+          gl_FragColor = vec4(glowColor * texel.rgb * vStreakOpacity, texel.a * vStreakOpacity);
+      }
+    </script>      
+    <!-- SHOOTING STAR SHADERS END -->
     <!-- GLSL VERTEX & FRAGMENT SHADERS SECTION ENDS -->
 
     <!-- JS SECTION STARTS -->
@@ -387,12 +428,12 @@
         camera.position.z = 5000; // Adjust this value based on how zoomed out you want to start
 
         // Target position (zoomed in)
-        const targetPositionZ = 10; // Adjust this to the desired final zoom level
+        const targetPositionZ = 7.5; // Adjust this to the desired final zoom level
 
         // GSAP animation
         gsap.to(camera.position, {
           z: targetPositionZ, // Final camera position
-          duration: 6, // Duration of the animation in seconds
+          duration: 4.5, // Duration of the animation in seconds
           ease: "power4.inOut",
           onStart: function () {
             // Optional: Actions to take when the animation starts
@@ -552,7 +593,7 @@
 
       function init(font) {
         uniforms = {
-          amplitude: { value: 6.0 },
+          amplitude: { value: 3.0 },
           opacity: { value: 0.2 },
           color: { value: new THREE.Color(0xffffff) },
         };
@@ -643,7 +684,7 @@
       };
 
       function createStarfield() {
-        const starCount = 80000;
+        const starCount = 100000;
         const geometry = new THREE.BufferGeometry();
         const positions = [];
         const sizes = [];
@@ -700,6 +741,133 @@
       }
       createStarfield();
 
+      // SHOOTING STARS
+      const shootingStarMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0.0 },
+            pointTexture: { value: textureLoader.load('images/wc.png') },
+            starColor: { type: "v3", value: new THREE.Color(0xffffff) },
+            glowIntensity: { type: "f", value: 1.5 },
+        },
+        vertexShader: document.getElementById('shootingStarVertexShader').textContent,
+        fragmentShader: document.getElementById('shootingStarFragmentShader').textContent,
+        transparent: true,
+        depthTest: false,
+        blending: THREE.AdditiveBlending,
+        vertexColors: true,
+      });
+
+      const shootingStars = [];
+
+
+      function createShootingStar() {
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(
+          3
+      //   [
+      //   THREE.Math.randFloatSpread(100), // X
+      //   THREE.Math.randFloatSpread(100), // Y
+      //   THREE.Math.randFloatSpread(100)  // Z
+      // ]
+      ); // x, y, z
+      const colors = [];
+
+      // Randomize initial position around the Earth
+      const radius = 100; // Example radius around the Earth where shooting stars can start
+      const theta = Math.random() * 2 * Math.PI;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[0] = radius * Math.sin(phi) * Math.cos(theta); // X
+      positions[1] = radius * Math.sin(phi) * Math.sin(theta); // Y
+      positions[2] = radius * Math.cos(phi); // Z
+
+      // Random velocity direction
+      const speed = 30; // Example speed, adjust as necessary
+        const velocity = new THREE.Vector3(
+            (Math.random() - 0.5) * speed,
+            (Math.random() - 0.5) * speed,
+            (Math.random() - 0.5) * speed
+        );
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute(
+          "customColor",
+          new THREE.Float32BufferAttribute(colors, 3)
+        );
+
+        const colorChoice = Math.random();
+          if (colorChoice < 0.33) {
+            // White
+            colors.push(1, 1, 1); // R, G, B
+          } else if (colorChoice < 0.66) {
+            // Yellow
+            colors.push(1, 1, 0); // R, G, B
+          } else {
+            // Blue
+            colors.push(0, 0, Math.random() * 0.5 + 0.5); // Blue with varying intensity
+          }
+
+        const starMaterial = shootingStarMaterial.clone();
+        starMaterial.vertexColors = true;
+        starMaterial.uniforms.starColor.value = colors;
+
+        const star = new THREE.Points(geometry, starMaterial);
+
+        // Trail
+        const trailMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const trailGeometry = new THREE.BufferGeometry();
+        const trailPositions = new Float32Array(6); // 2 points: x1, y1, z1, x2, y2, z2
+        trailGeometry.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+        const trail = new THREE.Line(trailGeometry, trailMaterial);
+
+        scenePlanet.add(star, trail);
+
+        return { star, trail, velocity, colors };
+      }
+
+      // Create multiple shooting stars
+      for (let i = 0; i < 50; i++) { // Create 5 shooting stars
+          shootingStars.push(createShootingStar());
+      }
+
+      function updateShootingStars(deltaTime) {
+        shootingStars.forEach(shootingStar => {
+            const positionAttr = shootingStar.star.geometry.attributes.position;
+            const positions = positionAttr.array;
+
+            // Update position based on velocity
+            positions[0] += shootingStar.velocity.x * deltaTime;
+            positions[1] += shootingStar.velocity.y * deltaTime;
+            positions[2] += shootingStar.velocity.z * deltaTime;
+
+            // Calculate the distance from the center
+            const distance = Math.sqrt(positions[0] ** 2 + positions[1] ** 2 + positions[2] ** 2);
+            const resetDistance = 300; // Example reset boundary, adjust as needed
+
+            // Check if the shooting star is beyond the reset distance
+            if (distance > resetDistance) {
+                // Reset position to a new random location around the scene
+                const radius = 10; // Example start radius, adjust as needed
+                const theta = Math.random() * 2 * Math.PI;
+                const phi = Math.acos(2 * Math.random() - 1);
+                positions[0] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[2] = radius * Math.cos(phi);
+
+                // Optionally, reset velocity for varied trajectories
+                const speed = 5; // Adjust speed as necessary
+                shootingStar.velocity.set(
+                    (Math.random() - 0.5) * speed,
+                    (Math.random() - 0.5) * speed,
+                    (Math.random() - 0.5) * speed
+                );
+            }
+
+            // Update the geometry to reflect the new position
+            positionAttr.needsUpdate = true;
+
+        });
+    }
+
       // CITIES
       let points = [
         {
@@ -742,6 +910,13 @@
           coords: {
             lat: 37.5665,
             lng: 126.978,
+          },
+        },
+        {
+          title: "Daisen, JP",
+          coords: {
+            lat: 39.45304,
+            lng: 140.47545,
           },
         },
         {
@@ -986,7 +1161,7 @@
       controls.enabled = true;
       //controls.target = scenePlanet.position;
 
-      controls.minDistance = 5;
+      controls.minDistance = 7.5;
       controls.maxDistance = 5000;
 
       controls.enableDamping = false;
@@ -1021,20 +1196,37 @@
         atmosphere.rotation.y -= 0.01;
         atmosphere.rotation.z += 0.005;
 
-        dt = clock.getDelta();
-        camera.position.z -= speed * dt;
-
-        // reset if camera position below 0
-        if (camera.position.z <= 1) {
-          camera.position.z = 30;
-        }
-
         line.rotation.y = 0.7 * time;
 
         uniforms.amplitude.value = 0.3 * Math.sin(0.2 * time);
         uniforms.color.value.offsetHSL(0.05, 2, 0);
 
         starMaterialUniforms.time.value += 0.01;
+
+        const deltaTime = clock.getDelta();
+    
+        shootingStars.forEach(({ star, trail, velocity, colors }) => {
+            // Update star position
+            const positions = star.geometry.attributes.position.array;
+            positions[0] += velocity.x * deltaTime * 50; // Adjust speed
+            positions[1] += velocity.y * deltaTime * 50;
+            positions[2] += velocity.z * deltaTime * 50;
+
+            // Update trail to follow the star
+            const trailPositions = trail.geometry.attributes.position.array;
+            trailPositions[0] = positions[0]; // Start of the trail
+            trailPositions[1] = positions[1];
+            trailPositions[2] = positions[2];
+            // End of the trail, slightly behind the star
+            trailPositions[3] = positions[0] - velocity.x * 5;
+            trailPositions[4] = positions[1] - velocity.y * 5;
+            trailPositions[5] = positions[2] - velocity.z * 5;
+
+            star.geometry.attributes.position.needsUpdate = true;
+            trail.geometry.attributes.position.needsUpdate = true;
+        });
+
+        updateShootingStars(deltaTime);
 
         coneMaterial.uniforms.time.value += 0.02;
 
