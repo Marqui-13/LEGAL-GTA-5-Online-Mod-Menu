@@ -124,5 +124,138 @@
             "lat": 25.4106,
             "lng": 51.1846
         }
+    },
+    {
+        "title": "Tokyo, JP",
+        "coords": {
+            "lat": 35.6895,
+            "lng": 139.6917
+        }
+    },
+    {
+        "title": "Los Angeles, US",
+        "coords": {
+            "lat": 34.0522,
+            "lng": -118.2437
+        }
+    },
+    {
+        "title": "London, UK",
+        "coords": {
+            "lat": 51.5074,
+            "lng": -0.1278
+        }
+    },
+    {
+        "title": "Berlin, DE",
+        "coords": {
+            "lat": 52.5200,
+            "lng": 13.4050
+        }
+    },
+    {
+        "title": "Sydney, AU",
+        "coords": {
+            "lat": -33.8688,
+            "lng": 151.2093
+        }
+    },
+    {
+        "title": "Moscow, RU",
+        "coords": {
+            "lat": 55.7558,
+            "lng": 37.6173
+        }
+    },
+    {
+        "title": "Cairo, EG",
+        "coords": {
+            "lat": 30.0444,
+            "lng": 31.2357
+        }
+    },
+    {
+        "title": "Buenos Aires, AR",
+        "coords": {
+            "lat": -34.6037,
+            "lng": -58.3816
+        }
+    },
+    {
+        "title": "Bangkok, TH",
+        "coords": {
+            "lat": 13.7563,
+            "lng": 100.5018
+        }
+    },
+    {
+        "title": "Cape Town, ZA",
+        "coords": {
+            "lat": -33.9249,
+            "lng": 18.4241
+        }
+    },
+    {
+        "title": "New York City, US",
+        "coords": {
+            "lat": 40.7128,
+            "lng": -74.0060
+        }
+    },
+    {
+        "title": "Des Moines, US",
+        "coords": {
+            "lat": 41.5891,
+            "lng": -93.6162
+        }
+    },
+    {
+        "title": "Singapore, SG",
+        "coords": {
+            "lat": 1.3521,
+            "lng": 103.8198
+        }
+    },
+    {
+        "title": "Istanbul, TR",
+        "coords": {
+            "lat": 41.0082,
+            "lng": 28.9784
+        }
+    },
+    {
+        "title": "Dubai, AE",
+        "coords": {
+            "lat": 25.2048,
+            "lng": 55.2708
+        }
+    },
+    {
+        "title": "São Paulo, BR",
+        "coords": {
+            "lat": -23.5505,
+            "lng": -46.6333
+        }
+    },
+    {
+        "title": "Mumbai, IN",
+        "coords": {
+            "lat": 19.0760,
+            "lng": 72.8777
+        }
+    },
+    {
+        "title": "Shanghai, CN",
+        "coords": {
+            "lat": 31.2304,
+            "lng": 121.4737
+        }
+    },
+    {
+        "title": "Rome, IT",
+        "coords": {
+            "lat": 41.9028,
+            "lng": 12.4964
+        }
     }
 ]
