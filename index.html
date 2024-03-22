@@ -513,40 +513,61 @@
             }
 
             searchInput.addEventListener("input", function () {
-                const input = this.value.toLowerCase();
-                clearDropdown();
+            const input = this.value.toLowerCase();
+            clearDropdown();
 
-                if (input.length > 0) {
-                    const filteredPoints = points.filter((point) =>
-                        point.title.toLowerCase().includes(input)
-                    );
-                    filteredPoints.forEach((point) => {
-                        const item = document.createElement("div");
-                        item.textContent = point.title;
-                        item.className = "dropdown-item";
-                        item.onclick = function () {
-                            searchInput.value = point.title;
-                            rotateToCity(point.coords.lat, point.coords.lng);
+            if (input.length > 0) {
+                // Filter cities that match the input
+                const filteredPoints = points.filter((point) =>
+                    point.title.toLowerCase().includes(input)
+                );
 
-                            if (marker) {
-                                group.remove(marker);
-                            }
-                            marker = createMarker(point.coords.lat, point.coords.lng);
-                            group.add(marker);
-
-                            clearDropdown();
-                        };
-                        dropdownContainer.appendChild(item);
-                        dropdownContainer.style.display = "block";
-                    });
-
-                    if (filteredPoints.length === 0) {
-                        dropdownContainer.style.display = "none";
+                // Sort the filtered cities so that cities starting with the input come first
+                const sortedFilteredPoints = filteredPoints.sort((a, b) => {
+                    const aStartsWithInput = a.title.toLowerCase().startsWith(input);
+                    const bStartsWithInput = b.title.toLowerCase().startsWith(input);
+                    
+                    if (aStartsWithInput && !bStartsWithInput) {
+                        return -1;
+                    } else if (!aStartsWithInput && bStartsWithInput) {
+                        return 1;
+                    } else {
+                        return a.title.localeCompare(b.title);
                     }
-                } else {
-                    clearDropdown();
+                });
+
+                // Limit the number of cities to display in the dropdown to 5
+                const limitedSortedFilteredPoints = sortedFilteredPoints.slice(0, 5);
+
+                // Create dropdown items for the sorted and limited cities
+                limitedSortedFilteredPoints.forEach((point) => {
+                    const item = document.createElement("div");
+                    item.textContent = point.title;
+                    item.className = "dropdown-item";
+                    item.onclick = function () {
+                        searchInput.value = point.title;
+                        rotateToCity(point.coords.lat, point.coords.lng);
+
+                        if (marker) {
+                            group.remove(marker);
+                        }
+                        marker = createMarker(point.coords.lat, point.coords.lng);
+                        group.add(marker);
+
+                        clearDropdown();
+                    };
+                    dropdownContainer.appendChild(item);
+                    dropdownContainer.style.display = "block";
+                });
+
+                if (limitedSortedFilteredPoints.length === 0) {
+                    dropdownContainer.style.display = "none";
                 }
-            });
+            } else {
+                clearDropdown();
+            }
+        });
+
 
             document.addEventListener("click", function (event) {
                 if (!searchInput.contains(event.target) && !dropdownContainer.contains(event.target)) {
@@ -986,7 +1007,7 @@
             z: quaternion.z,
             w: quaternion.w,
             duration: 3,
-            ease: "power3.inOut",
+            ease: "none",
             onUpdate: function () {
               controls.update();
             },
