@@ -494,57 +494,67 @@
 
         const searchInput = document.getElementById("city-search");
         const dropdownContainer = document.getElementById("dropdown-container");
-        document.addEventListener("DOMContentLoaded", function () {
-          function clearDropdown() {
-            dropdownContainer.innerHTML = "";
-            dropdownContainer.style.display = "none";
-          }
 
-          searchInput.addEventListener("input", function () {
-            const input = this.value.toLowerCase();
-            clearDropdown();
+        // This function will fetch the cities from the JSON file
+        function fetchCities() {
+            return fetch('cities.json') // Path to your JSON file
+                .then(response => response.json())
+                .then(data => data)
+                .catch(error => console.error("Could not load cities:", error));
+        }
 
-            if (input.length > 0) {
-              const filteredPoints = points.filter((point) =>
-                point.title.toLowerCase().includes(input)
-              );
-              filteredPoints.forEach((point) => {
-                const item = document.createElement("div");
-                item.textContent = point.title;
-                item.className = "dropdown-item";
-                item.onclick = function () {
-                  searchInput.value = point.title;
-                  rotateToCity(point.coords.lat, point.coords.lng);
+        document.addEventListener("DOMContentLoaded", async function () {
+            // Fetch cities and store them
+            const points = await fetchCities();
 
-                  if (marker) {
-                    group.remove(marker);
-                  }
-                  marker = createMarker(point.coords.lat, point.coords.lng);
-                  group.add(marker);
-
-                  clearDropdown();
-                };
-                dropdownContainer.appendChild(item);
-                dropdownContainer.style.display = "block";
-              });
-
-              if (filteredPoints.length === 0) {
+            function clearDropdown() {
+                dropdownContainer.innerHTML = "";
                 dropdownContainer.style.display = "none";
-              }
-            } else {
-              clearDropdown();
             }
-          });
 
-          document.addEventListener("click", function (event) {
-            if (
-              !searchInput.contains(event.target) &&
-              !dropdownContainer.contains(event.target)
-            ) {
-              clearDropdown();
-            }
-          });
+            searchInput.addEventListener("input", function () {
+                const input = this.value.toLowerCase();
+                clearDropdown();
+
+                if (input.length > 0) {
+                    const filteredPoints = points.filter((point) =>
+                        point.title.toLowerCase().includes(input)
+                    );
+                    filteredPoints.forEach((point) => {
+                        const item = document.createElement("div");
+                        item.textContent = point.title;
+                        item.className = "dropdown-item";
+                        item.onclick = function () {
+                            searchInput.value = point.title;
+                            rotateToCity(point.coords.lat, point.coords.lng);
+
+                            if (marker) {
+                                group.remove(marker);
+                            }
+                            marker = createMarker(point.coords.lat, point.coords.lng);
+                            group.add(marker);
+
+                            clearDropdown();
+                        };
+                        dropdownContainer.appendChild(item);
+                        dropdownContainer.style.display = "block";
+                    });
+
+                    if (filteredPoints.length === 0) {
+                        dropdownContainer.style.display = "none";
+                    }
+                } else {
+                    clearDropdown();
+                }
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!searchInput.contains(event.target) && !dropdownContainer.contains(event.target)) {
+                    clearDropdown();
+                }
+            });
         });
+
 
         // LOADING MANAGER
         const manager = new THREE.LoadingManager();
@@ -903,136 +913,6 @@
 
           });
       }
-
-        // CITIES
-        let points = [
-          {
-            title: "Current Location",
-            coords: {
-              lat: 42.496815,
-              lng: -92.330469,
-            },
-          },
-          {
-            title: "Chicago, US",
-            coords: {
-              lat: 41.8781,
-              lng: -87.6298,
-            },
-          },
-          {
-            title: "New Delhi, IN",
-            coords: {
-              lat: 28.6139,
-              lng: 77.209,
-            },
-          },
-          {
-            title: "Kyiv, UA",
-            coords: {
-              lat: 50.4501,
-              lng: 30.5234,
-            },
-          },
-          {
-            title: "Paris, EU",
-            coords: {
-              lat: 48.8566,
-              lng: 2.3522,
-            },
-          },
-          {
-            title: "Seoul, KR",
-            coords: {
-              lat: 37.5665,
-              lng: 126.978,
-            },
-          },
-          {
-            title: "Daisen, JP",
-            coords: {
-              lat: 39.45304,
-              lng: 140.47545,
-            },
-          },
-          {
-            title: "Egypt, AF",
-            coords: {
-              lat: 26.8206,
-              lng: 30.8025,
-            },
-          },
-          {
-            title: "Brazil, SA",
-            coords: {
-              lat: -14.235,
-              lng: -51.9253,
-            },
-          },
-          {
-            title: "Mexico City, MX",
-            coords: {
-              lat: 19.4326,
-              lng: -99.1332,
-            },
-          },
-          {
-            title: "Alice Springs, AU",
-            coords: {
-              lat: -23.698,
-              lng: 133.8807,
-            },
-          },
-          {
-            title: "Gansu, CN",
-            coords: {
-              lat: 36.0594,
-              lng: 103.8263,
-            },
-          },
-          {
-            title: "South Pole, AQ",
-            coords: {
-              lat: 90.0,
-              lng: 45.0,
-            },
-          },
-          {
-            title: "Chile, SA",
-            coords: {
-              lat: -35.6751,
-              lng: -71.543,
-            },
-          },
-          {
-            title: "Sabah, MA",
-            coords: {
-              lat: 5.9788,
-              lng: 116.0753,
-            },
-          },
-          {
-            title: "Cancun, MX",
-            coords: {
-              lat: 21.1619,
-              lng: -86.8515,
-            },
-          },
-          {
-            title: "Zambia, AF",
-            coords: {
-              lat: -13.1339,
-              lng: 27.8493,
-            },
-          },
-          {
-            title: "Ash-Shahaniyah, QA",
-            coords: {
-              lat: 25.4106,
-              lng: 51.1846,
-            },
-          },
-        ];
 
         // CALCULATE POSITION FROM LATITUDE & LONGITUDE IN RADIANS
         function calcPosFromLatLonRad(lat, lon) {
