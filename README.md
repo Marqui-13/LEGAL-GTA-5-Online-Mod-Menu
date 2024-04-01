@@ -8,8 +8,8 @@ Explore the marvels of our planet with our cutting-edge 3D Earth web application
 - CSS3
 - JavaScript
 - Three.js
+- CDNJS
 - GLSL (OpenGL Shading Language)
-- NPM
 - Fleek & IPFS for deployment
 
 ## Features
